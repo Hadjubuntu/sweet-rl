@@ -8,11 +8,11 @@ setup(
     author_email='adrien.hadj.salah@gmail.com',
     description='A sweet and nice reinforcement learning framework',
     packages=find_packages(),    
-    python_requires='>=3.8',
+    python_requires='>=3.6',
     install_requires=[
         'numpy==1.17.3', 
         'tensorflow==2.0.0',
-        'gym=0.15.4',
+        'gym==0.15.4',
         'keras==2.3.1',
         'pandas==0.25.3',
         'pytest==5.2.2'],

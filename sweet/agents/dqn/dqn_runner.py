@@ -1,13 +1,10 @@
  
-import rlimage.agents.dqn_agent as dqn
+import sweet.agents.dqn.dqn_agent as dqn
 import gym
 import numpy as np
 from collections import deque
 from math import log, e
 
-# from nes_py.wrappers import JoypadSpace
-# import gym_super_mario_bros
-# from gym_super_mario_bros.actions import SIMPLE_MOVEMENT
 def entropy(labels, base=None):
     value, counts = np.unique(labels, return_counts=True)
     norm_counts = counts / counts.sum()
