@@ -1,25 +1,36 @@
 
+from sweet.agents.agent import Agent
 from collections import deque
 from keras.models import Model, Sequential
 from keras.layers import Dense, Input, LSTM, Embedding, Dropout, Activation, Flatten
 from keras.optimizers import Adam
 import numpy as np
 import random
+import logging
 
-class DqnAgent():
+class DqnAgent(Agent):
     """
     Simple implementation of DQN algorithm with Keras
 
     Inspired by:
     paper : https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf
     example : https://keon.io/deep-q-learning/
+
+    Parameters
+    ----------
+        state_shape: shape
+            Observation state shape
+        action_size: int
+            Number of actions (Discrete only so far) 
+        lr: float
+            Learning rate
+    Returns
+    -------
     """
-    def __init__(self, 
-                state_shape, 
-                action_size, 
-                lr=0.001,
-                timesteps=1e4):
-        self.timesteps = timesteps
+    def __init__(self,
+                state_shape,
+                action_size,
+                lr=0.001):
         self.lr = lr
         self.state_shape = state_shape
         self.action_size = action_size
@@ -86,7 +97,6 @@ class DqnAgent():
                 next_state = np.expand_dims(next_state, axis=0)
                 target = reward + self.gamma * \
                         np.amax(self.model.predict(next_state)[0])
-
             
 
             state =  np.expand_dims(state, axis=0)
@@ -94,12 +104,12 @@ class DqnAgent():
             target_f[0][action] = target
 
             mse = (np.square(target_f - q_prediction)).mean(axis=None)
-            print("Diff target_f = {} // pred = {} // mse = {}".format(target_f, q_prediction, mse))
+            # logging.info("Diff target_f = {} // pred = {} // mse = {}".format(target_f, q_prediction, mse))
             
             history = self.model.fit(state, target_f, epochs=1, verbose=0)
 
             if self.nupdate % 100 == 0:
-                print('mse={} / eps={}'.format(history.history['loss'], self.eps))
+                logging.info('mse={} / eps={}'.format(history.history['loss'], self.eps))
 
         if self.eps > self.epsilon_min:
             self.eps *= self.epsilon_decay
