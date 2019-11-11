@@ -5,6 +5,7 @@ from collections import deque
 from math import log, e
 import logging
 
+import matplotlib.pyplot as plt
 
 
 def learn(
@@ -26,6 +27,7 @@ def learn(
     -------
     """
     total_timesteps = 0
+    sum_rewards = []
 
     while total_timesteps < timesteps:
         obs = env.reset()
@@ -54,7 +56,11 @@ def learn(
             rewards.append(rew)
 
             if done:
+                sum_rewards.append(np.sum(rewards))
                 logging.info("Episode done in {} steps with sum rewards {}".format(steps, np.sum(rewards)))
 
         agent.update()
-        env.render()
+        #env.render()
+    
+    plt.plot(sum_rewards)
+    plt.show()

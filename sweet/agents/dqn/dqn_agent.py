@@ -1,5 +1,6 @@
 
 from sweet.agents.agent import Agent
+from sweet.models.default_models import dense
 from collections import deque
 from keras.models import Model, Sequential
 from keras.layers import Dense, Input, LSTM, Embedding, Dropout, Activation, Flatten
@@ -21,7 +22,9 @@ class DqnAgent(Agent):
         state_shape: shape
             Observation state shape
         action_size: int
-            Number of actions (Discrete only so far) 
+            Number of actions (Discrete only so far)
+        model: Model or str
+            Neural network model or string representing NN (dense, cnn)
         lr: float
             Learning rate
     Returns
@@ -30,20 +33,21 @@ class DqnAgent(Agent):
     def __init__(self,
                 state_shape,
                 action_size,
-                lr=0.001):
+                model='dense',
+                lr=0.01):
         self.lr = lr
         self.state_shape = state_shape
         self.action_size = action_size
 
         self.gamma = 0.9    # discount rate
 
-        self.replay_buffer = deque(maxlen=10000)
-        self.eps = 1.0
+        self.replay_buffer = deque(maxlen=500)
+        self.eps = 0.9
         self.epsilon_min = 0.1
-        self.epsilon_decay = 0.99
+        self.epsilon_decay = 0.5
         self.nupdate = 0
 
-        self.model = self._build_model()
+        self.model = self._build_model(model)
 
 
     def memorize(self, st, at, rt, s_t1, done, q_prediction):
@@ -66,24 +70,18 @@ class DqnAgent(Agent):
 
         return a, act_values
 
-    def _build_model(self):
-        # This returns a tensor
-        inputs = Input(shape=self.state_shape)
+    def _build_model(self, model):
+        if isinstance(model, str):
+            model = dense(input_shape=self.state_shape, output_shape=self.action_size)
 
-        # a layer instance is callable on a tensor, and returns a tensor
-        x = Dense(32, activation='relu')(inputs)
-        # x = Dense(32, activation='relu')(x)
-        predictions = Dense(self.action_size, activation='linear')(x)
-
-        model = Model(inputs=inputs, outputs=predictions)
-        model.compile(loss='mse',
-                      optimizer=Adam(lr=self.lr))
-
-        model.summary()
+        model.compile(
+            loss='mse',
+            optimizer=Adam(lr=self.lr)
+            )
 
         return model
 
-    def update(self, batch_size=64):
+    def update(self, batch_size=32):        
         if len(self.replay_buffer) > batch_size:
             self._update(batch_size)
             self.nupdate += 1
@@ -102,9 +100,6 @@ class DqnAgent(Agent):
             state =  np.expand_dims(state, axis=0)
             target_f = self.model.predict(state)
             target_f[0][action] = target
-
-            mse = (np.square(target_f - q_prediction)).mean(axis=None)
-            # logging.info("Diff target_f = {} // pred = {} // mse = {}".format(target_f, q_prediction, mse))
             
             history = self.model.fit(state, target_f, epochs=1, verbose=0)
 
