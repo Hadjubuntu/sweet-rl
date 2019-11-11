@@ -6,7 +6,7 @@ import logging
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
 
-def test_dqn(env_name='CartPole-v0'):
+def dqn(env_name='CartPole-v0'):
     # Load OpenAI Gym env
     env = gym.make(env_name)
 
@@ -19,4 +19,4 @@ def test_dqn(env_name='CartPole-v0'):
 
 
 if __name__ == "__main__":
-    test_dqn()
+    dqn()

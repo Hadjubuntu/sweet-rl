@@ -1,6 +1,8 @@
 
 from sweet.agents.agent import Agent
 from sweet.models.default_models import dense
+from sweet.common.schedules import ConstantSchedule, LinearSchedule
+
 from collections import deque
 from keras.models import Model, Sequential
 from keras.layers import Dense, Input, LSTM, Embedding, Dropout, Activation, Flatten
@@ -27,22 +29,29 @@ class DqnAgent(Agent):
             Neural network model or string representing NN (dense, cnn)
         lr: float
             Learning rate
-    Returns
-    -------
+        gamma: float
+            Discount factor
+        epsilon: float
+            Exploration factor
     """
     def __init__(self,
                 state_shape,
                 action_size,
                 model='dense',
-                lr=0.01):
-        self.lr = lr
+                lr=ConstantSchedule(0.01),
+                gamma=0.99,
+                epsilon=0.9):
+
+        super().__init__(lr)
+
         self.state_shape = state_shape
         self.action_size = action_size
 
-        self.gamma = 0.9    # discount rate
+        # Hyperparameters
+        self.gamma = gamma
 
         self.replay_buffer = deque(maxlen=500)
-        self.eps = 0.9
+        self.eps = epsilon
         self.epsilon_min = 0.1
         self.epsilon_decay = 0.5
         self.nupdate = 0
@@ -76,7 +85,7 @@ class DqnAgent(Agent):
 
         model.compile(
             loss='mse',
-            optimizer=Adam(lr=self.lr)
+            optimizer=Adam(lr=self._lr())
             )
 
         return model
