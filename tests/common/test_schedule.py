@@ -1,5 +1,7 @@
-from sweet.common.schedules import ConstantSchedule, LinearSchedule
-
+from sweet.common.schedule import ConstantSchedule, LinearSchedule
+"""
+Test capacity to schedule a variable value along training
+"""
 
 def test_const_schedule():
     schedule = ConstantSchedule(const=0.5)

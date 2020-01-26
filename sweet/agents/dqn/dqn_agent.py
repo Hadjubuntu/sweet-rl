@@ -1,7 +1,7 @@
 
 from sweet.agents.agent import Agent
 from sweet.models.default_models import dense
-from sweet.common.schedules import ConstantSchedule, LinearSchedule
+from sweet.common.schedule import ConstantSchedule, LinearSchedule
 
 from collections import deque
 from keras.models import Model, Sequential

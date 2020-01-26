@@ -1,16 +1,25 @@
 from abc import ABC, abstractmethod
-from sweet.common.schedules import Schedule
+from sweet.common.schedule import Schedule
 import numpy as np
 
 class Agent(ABC):
     def __init__(self, lr):
+        """
+        Abstract class to describe any RL agent
+        """
         self.lr = lr
 
     @abstractmethod
     def act(self, obs):
+        """
+        Determines action regarding current observation
+        """
         pass
 
     def _lr(self, t=0):
+        """
+        Learning rate computation
+        """
         if isinstance(self.lr, float):
             return self.lr
         elif isinstance(self.lr, Schedule):

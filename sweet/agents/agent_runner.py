@@ -34,7 +34,6 @@ def learn(
         done = False
         rewards = []
         steps = 0
-        act_stable = deque(maxlen=50)
 
         while not done:
             action, q_prediction = agent.act(obs)
@@ -42,10 +41,6 @@ def learn(
                 action = env.action_space.sample()
 
             next_obs, rew, done, info = env.step(action)
-
-            # # Tuned reward
-            # act_stable.append(next_obs)
-            # rew = np.abs(next_obs[0]) - entropy(act_stable)
 
             # Memorize s_t, a_t, r_t, s_t+1 with a capacity N
             agent.memorize(obs, action, rew, next_obs, done, q_prediction)
