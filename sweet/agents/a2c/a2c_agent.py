@@ -43,8 +43,15 @@ class A2CAgent(Agent):
         action = np.argmax(action)
 
         return action, value
-    
 
-    def update(self, obs, rewards, actions, dones, values):
-        self.critic.update(obs, rewards, dones, values)
-        self.actor.update(obs, rewards, actions, dones, values)
+    def update(self, obs, rewards, actions, dones, values):        
+        discounted_reward = self.discount_with_dones(rewards, dones, self.gamma)
+        print("Shape = {}".format(obs.shape))
+        print(discounted_reward)
+
+        V = self.critic.predict(obs)
+        advs = discounted_reward - V
+
+        # Update both actor and critic
+        self.critic.update(obs, values)
+        self.actor.update(obs, actions, advs)

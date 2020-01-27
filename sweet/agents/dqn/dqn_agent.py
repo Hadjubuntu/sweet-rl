@@ -114,7 +114,7 @@ class DqnAgent(Agent):
             # Execute gradient descent
             history = self.model.fit(state, target_f, epochs=1, verbose=0)
 
-            if self.nupdate % 100 == 0:
+            if self.nupdate > 100 and self.nupdate % 100 == 0:
                 logging.info('mse={} / eps={}'.format(history.history['loss'], self.eps))
 
         if self.eps > self.epsilon_min:

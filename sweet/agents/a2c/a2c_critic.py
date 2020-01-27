@@ -18,5 +18,5 @@ class A2CCritic():
     def predict(self, obs):
         return self.model.predict(obs)
 
-    def update(self):
-        pass
+    def update(self, obs, values):
+        history = self.model.fit(obs, values, epochs=1, verbose=0)

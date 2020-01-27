@@ -3,6 +3,7 @@ from sweet.agents.a2c.a2c_agent import A2CAgent
 
 import gym
 import logging
+import numpy as np
 
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
@@ -32,6 +33,12 @@ class Runner():
 
             if done:
                 obs = self.env.reset()
+
+        mb_obs = np.asarray(mb_obs, dtype=np.float32)
+        mb_rewards = np.asarray(mb_rewards, dtype=np.float32)
+        mb_actions = np.asarray(mb_actions, dtype=np.float32)
+        mb_dones = np.asarray(mb_dones, dtype=np.float32)
+        mb_values = np.asarray(mb_values, dtype=np.float32)
 
         return mb_obs, mb_rewards, mb_actions, mb_dones, mb_values
 

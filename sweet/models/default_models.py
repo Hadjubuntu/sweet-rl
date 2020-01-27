@@ -11,7 +11,7 @@ def str_to_model(model_str: str):
         logging.error(f"Unknow model: {model_str}")
 
 
-def dense(input_shape, output_shape):
+def dense(input_shape, output_shape, output_activation='linear'):
     """
     Build a simple Dense model
 
