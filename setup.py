@@ -15,5 +15,6 @@ setup(
         'gym==0.15.4',
         # 'keras==2.3.1', fully integrated into tensorflow 2.x
         'pandas==0.25.3',
-        'pytest==5.2.2'],
+        'pytest==5.2.2',
+        'matplotlib==3.1.2'],
 )

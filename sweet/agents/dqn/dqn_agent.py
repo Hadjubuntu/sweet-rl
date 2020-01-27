@@ -1,12 +1,8 @@
 
 from sweet.agents.agent import Agent
-from sweet.models.default_models import dense
 from sweet.common.schedule import ConstantSchedule, LinearSchedule
 
 from collections import deque
-from keras.models import Model, Sequential
-from keras.layers import Dense, Input, LSTM, Embedding, Dropout, Activation, Flatten
-from keras.optimizers import Adam
 import numpy as np
 import random
 import logging
@@ -27,45 +23,57 @@ class DqnAgent(Agent):
             Number of actions (Discrete only so far)
         model: Model or str
             Neural network model or string representing NN (dense, cnn)
-        lr: float
+        lr: float or sweet.common.schedule.Schedule
             Learning rate
         gamma: float
             Discount factor
         epsilon: float
-            Exploration factor
+            Exploration probability (choose random action over max Q-value action)
+        epsilon_min: float
+            Minimum probability of exploration
+        epsilon_decay: float
+            Decay of exploration at each update
+        replay_buffer: int
+            Size of the  replay buffer
     """
     def __init__(self,
                 state_shape,
                 action_size,
                 model='dense',
                 lr=ConstantSchedule(0.01),
-                gamma=0.99,
-                epsilon=0.9):
+                gamma: float=0.99,
+                epsilon: float=0.9,
+                epsilon_min: float=0.1,
+                epsilon_decay: float=0.5,
+                replay_buffer: int=5000):
+        # Generic initialization
+        super().__init__(lr, model, state_shape, action_size)
 
-        super().__init__(lr)
-
+        # Input/output shapes
         self.state_shape = state_shape
         self.action_size = action_size
 
         # Hyperparameters
         self.gamma = gamma
-
-        self.replay_buffer = deque(maxlen=500)
+        self.replay_buffer = deque(maxlen=replay_buffer)
         self.eps = epsilon
-        self.epsilon_min = 0.1
-        self.epsilon_decay = 0.5
-        self.nupdate = 0
+        self.epsilon_min = epsilon_min
+        self.epsilon_decay = epsilon_decay
 
-        self.model = self._build_model(model)
+        # Statistics
+        self.nupdate = 0
 
 
     def memorize(self, st, at, rt, s_t1, done, q_prediction):
+        """
+        Store pair of state, action, reward, .. data into a buffer
+        """
         self.replay_buffer.append((st, at, rt, s_t1, done, q_prediction))
    
 
     def act(self, obs):
         """
-        Select action
+        Select action regarding exploration factor.
         """        
         a = None
         # Reshape obs
@@ -79,17 +87,7 @@ class DqnAgent(Agent):
 
         return a, act_values
 
-    def _build_model(self, model):
-        if isinstance(model, str):
-            model = dense(input_shape=self.state_shape, output_shape=self.action_size)
-
-        model.compile(
-            loss='mse',
-            optimizer=Adam(lr=self._lr())
-            )
-
-        return model
-
+    
     def update(self, batch_size=32):        
         if len(self.replay_buffer) > batch_size:
             self._update(batch_size)

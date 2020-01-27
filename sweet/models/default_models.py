@@ -1,6 +1,14 @@
 
-from keras.models import Model, Sequential
-from keras.layers import Dense, Input, LSTM, Embedding, Dropout, Activation, Flatten
+from tensorflow.keras.models import Model, Sequential
+from tensorflow.keras.layers import Dense, Input, LSTM, Embedding, Dropout, Activation, Flatten
+
+import logging
+
+def str_to_model(model_str: str):
+    if model_str == 'dense':
+        return None
+    else:
+        logging.error(f"Unknow model: {model_str}")
 
 
 def dense(input_shape, output_shape):
