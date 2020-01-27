@@ -8,6 +8,9 @@ from tensorflow.keras.optimizers import Adam
 from sweet.models.default_models import dense
 
 class Agent(ABC):
+    """
+    Generic class for RL algorithm
+    """    
     def __init__(self, lr, model, state_shape, action_size):
         """
         Generic initialization of RL algorithm
@@ -47,13 +50,16 @@ class Agent(ABC):
             loss = 'mse'
 
         model.compile(
-            loss='mse',
+            loss=loss,
             optimizer=Adam(lr=self._lr())
             )
 
         return model
 
-    def entropy(self, labels, base=None):
+    def _entropy(self, labels, base=None):
+        """
+        Compute entry of input labels
+        """
         value, counts = np.unique(labels, return_counts=True)
         norm_counts = counts / counts.sum()
         base = e if base is None else base

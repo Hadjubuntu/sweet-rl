@@ -19,8 +19,8 @@ def learn(
     ----------
         env: gym.Env
             OpenAI Gym environment
-        agent: 
-            sweet-RL algorithm
+        agent: sweet.agents.agent.Agent
+            RL algorithm agent
         timesteps: int
             Number of timesteps executed during learning
     Returns

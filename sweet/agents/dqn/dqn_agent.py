@@ -94,7 +94,10 @@ class DqnAgent(Agent):
             self.nupdate += 1
 
     def _update(self, batch_size):
+        # Sample minibatch from replay buffer
         minibatch = random.sample(self.replay_buffer, batch_size)
+
+        # Fit model for each minibatch data
         for state, action, reward, next_state, done, q_prediction in minibatch:
             target = reward
             
@@ -108,6 +111,7 @@ class DqnAgent(Agent):
             target_f = self.model.predict(state)
             target_f[0][action] = target
             
+            # Execute gradient descent
             history = self.model.fit(state, target_f, epochs=1, verbose=0)
 
             if self.nupdate % 100 == 0:
@@ -115,7 +119,3 @@ class DqnAgent(Agent):
 
         if self.eps > self.epsilon_min:
             self.eps *= self.epsilon_decay
-
-
-
-        
