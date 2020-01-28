@@ -1,5 +1,5 @@
 
-![alt text](https://raw.githubusercontent.com/Hadjubuntu/sweet-rl/master/misc/logo.png)
+![alt text](https://raw.githubusercontent.com/Hadjubuntu/sweet-rl/develop/misc/logo.png)
 
 ## Why Sweet-RL
 A nice and sweet reinforcement learning framework
