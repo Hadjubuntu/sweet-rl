@@ -1,5 +1,7 @@
-# Sweet-RL
+
 ![alt text](https://raw.githubusercontent.com/Hadjubuntu/sweet-rl/master/misc/logo.png)
+
+## Why Sweet-RL
 A nice and sweet reinforcement learning framework
 
 ## Install sweet-rl
