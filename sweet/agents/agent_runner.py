@@ -4,58 +4,73 @@ import numpy as np
 from collections import deque
 from math import log, e
 import logging
-
+from abc import ABC, abstractmethod
 import matplotlib.pyplot as plt
 
+from sweet.agents.agent import Agent
+from sweet.agents.runner.stop_condition import StopCond, EpisodeDoneStopCond
+              
+class Runner():
+    def __init__(self, 
+                env, 
+                agent: Agent, 
+                stop_cond: StopCond = EpisodeDoneStopCond()):
+        """
+        Runner aims to collect batch of experience
 
-def learn(
-    env,
-    agent,
-    timesteps=1e5):
-    """
-    Runner for RL agent: Expriment environment, memorize experiences and execute RL updates.
 
-    Parameters
-    ----------
-        env: gym.Env
-            OpenAI Gym environment
-        agent: sweet.agents.agent.Agent
-            RL algorithm agent
-        timesteps: int
-            Number of timesteps executed during learning
-    Returns
-    -------
-    """
-    total_timesteps = 0
-    sum_rewards = []
+        Parameters
+        ----------
+            env: gym.Env
+                Environment
+            agent: sweet.agents.agent.Agent
+                RL algorithm agent
+            stop_cond: StopCond (default: EpisodeDoneStopCond)
+                Stop condition for collection a batch of experience
+        """
+        self.env = env
+        self.agent = agent
+        self.stop_cond = stop_cond
 
-    while total_timesteps < timesteps:
-        obs = env.reset()
+    def run(self):
+        """
+        Execute the environment for nsteps to collect batch of experience
+        """
+        mb_obs, mb_next_obs, mb_rewards, mb_actions, mb_dones, mb_values = [], [], [], [], [], []
+
+        # Reset environment and stop condition
+        self.stop_cond.reset()
+        obs = self.env.reset()
         done = False
-        rewards = []
-        steps = 0
 
-        while not done:
-            action, q_prediction = agent.act(obs)
-            if not env.action_space.contains(action):
-                action = env.action_space.sample()
+        # We collect until the stop condition is encountered
+        while self.stop_cond.iterate(done=done):
+            # Compute agent action and value (or Q-value depending on agent) estimation
+            action, value = self.agent.act(obs)
 
-            next_obs, rew, done, info = env.step(action)
+            # Take actions in env and collect experience outputs
+            next_obs, rew, done, _ = self.env.step(action)
 
-            # Memorize s_t, a_t, r_t, s_t+1 with a capacity N
-            agent.memorize(obs, action, rew, next_obs, done, q_prediction)
+            # Store all needed data
+            mb_obs.append(obs)
+            mb_next_obs.append(next_obs)
+            mb_rewards.append(rew)
+            mb_actions.append(action)
+            mb_dones.append(done)
+            mb_values.append(value)
 
             obs = next_obs
-            steps += 1
-            total_timesteps  += 1
-            rewards.append(rew)
 
             if done:
-                sum_rewards.append(np.sum(rewards))
-                logging.info("Episode done in {} steps with sum rewards {}".format(steps, np.sum(rewards)))
+                obs = self.env.reset()
 
-        agent.update()
-        #env.render()
-    
-    plt.plot(sum_rewards)
-    plt.show()
+        # Transform list into numpy array
+        mb_obs = np.asarray(mb_obs, dtype=np.float32)
+        mb_next_obs = np.asarray(mb_obs, dtype=np.float32)
+        mb_rewards = np.asarray(mb_rewards, dtype=np.float32)
+        # FIXME: int32 for action => Discrete action so far
+        mb_actions = np.asarray(mb_actions, dtype=np.int32)
+        mb_dones = np.asarray(mb_dones, dtype=np.float32)
+        mb_values = np.asarray(mb_values, dtype=np.float32)
+
+        return mb_obs, mb_next_obs, mb_rewards, mb_actions, mb_dones, mb_values

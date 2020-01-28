@@ -44,7 +44,7 @@ class DqnAgent(Agent):
                 gamma: float=0.99,
                 epsilon: float=0.9,
                 epsilon_min: float=0.1,
-                epsilon_decay: float=0.5,
+                epsilon_decay: float=0.99,
                 replay_buffer: int=5000):
         # Generic initialization
         super().__init__(lr, model, state_shape, action_size)
@@ -64,11 +64,12 @@ class DqnAgent(Agent):
         self.nupdate = 0
 
 
-    def memorize(self, st, at, rt, s_t1, done, q_prediction):
+    def memorize(self, batch_data):
         """
         Store pair of state, action, reward, .. data into a buffer
         """
-        self.replay_buffer.append((st, at, rt, s_t1, done, q_prediction))
+        for st, st_1, rt, at, done, q_prediction in batch_data:
+            self.replay_buffer.append((st, st_1, rt, at, done, q_prediction))
    
 
     def act(self, obs):
@@ -96,26 +97,29 @@ class DqnAgent(Agent):
     def _update(self, batch_size):
         # Sample minibatch from replay buffer
         minibatch = random.sample(self.replay_buffer, batch_size)
+        history = None
 
         # Fit model for each minibatch data
-        for state, action, reward, next_state, done, q_prediction in minibatch:
+        for batch_data in minibatch:
+            state, next_state, reward, action, done, _ = batch_data
             target = reward
             
             if not done:
                 next_state = np.expand_dims(next_state, axis=0)
+
                 target = reward + self.gamma * \
                         np.amax(self.model.predict(next_state)[0])
             
 
             state =  np.expand_dims(state, axis=0)
-            target_f = self.model.predict(state)
+            target_f = self.model.predict(state)     
             target_f[0][action] = target
+            
             
             # Execute gradient descent
             history = self.model.fit(state, target_f, epochs=1, verbose=0)
 
-            if self.nupdate > 100 and self.nupdate % 100 == 0:
-                logging.info('mse={} / eps={}'.format(history.history['loss'], self.eps))
-
         if self.eps > self.epsilon_min:
             self.eps *= self.epsilon_decay
+        
+        logging.info('mse={} / eps={}'.format(history.history['loss'], self.eps))
