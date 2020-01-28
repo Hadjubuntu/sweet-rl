@@ -8,8 +8,20 @@ from sweet.models.default_models import dense
 
 class A2CActor():
     def __init__(self, lr, input_shape, output_shape):
+        """
+        Initialize critic network of A2C
+        
+        Parameters
+        ----------
+            lr: float or sweet.common.schedule.Schedule
+                Learning rate
+            input_shape: shape
+                Observation state shape
+            output_shape: int
+                Number of actions (Discrete only so far)
+        """
         self.lr = lr
-        self.model = dense(input_shape, output_shape, output_activation='softmax')
+        self.model = dense(input_shape, output_shape, output_activation='softmax', name='A2C_actor')
         
 
         # Initialize model
@@ -18,9 +30,10 @@ class A2CActor():
             optimizer=Adam(lr=lr)
         )
 
-        # Define custom loss
     def loss_func(self):
-
+        """
+        Custom loss func to add entropy
+        """
         # Create a loss function that adds the MSE loss to the mean of all squared activations of a specific layer
         def loss(y_true,y_pred):
             return K.mean(K.square(y_pred - y_true), axis=-1)
@@ -35,8 +48,8 @@ class A2CActor():
         return self.model.predict(obs)
 
     def update(self, obs, actions, advs):
-        # TODO
-        # Create own loss
         """
+        Update actor network
         """
-        history = self.model.fit(obs, advs, epochs=1, verbose=0)
+        history = self.model.train_on_batch(obs, advs)
+        return history

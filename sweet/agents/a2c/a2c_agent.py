@@ -11,6 +11,19 @@ class A2CAgent(Agent):
     Simple A2C (Asynchronous Actor-Critic) implementation
 
     paper: https://arxiv.org/pdf/1602.01783.pdf    
+
+    Parameters
+    ----------
+        state_shape: shape
+            Observation state shape
+        action_size: int
+            Number of actions (Discrete only so far)
+        model: Model or str
+            Neural network model or string representing NN (dense, cnn)
+        lr: float or sweet.common.schedule.Schedule
+            Learning rate
+        gamma: float
+            Discount factor
     """
     def __init__(self, 
                 state_shape,
@@ -33,6 +46,21 @@ class A2CAgent(Agent):
         self.gamma = gamma
 
     def act(self, obs):
+        """
+        Execute actor to get action and critic to estimate current state value
+
+        Parameters
+        ----------
+            obs: spaces
+                Observation space from environment
+
+        Returns
+        ----------
+            action:
+                Current action chosen
+            value: float
+                Estimated value from critic
+        """
         # Reshape obs expecting (nb_batch, obs_shape..) and got (obs_shape)
         obs = np.expand_dims(obs, axis=0)
 
@@ -44,13 +72,20 @@ class A2CAgent(Agent):
 
         return action, value
 
-    def update(self, obs, rewards, actions, dones, values):        
+    def update(self, obs, rewards, actions, dones, values):
+        """
+        Update actor and critic network with batch of datas
+        """  
         discounted_reward = self.discount_with_dones(rewards, dones, self.gamma)
-        print("Shape = {}".format(obs.shape))
-        print(discounted_reward)
 
+        # Reshape discounted_reward to have (nbatch, 1) dimension instead of (nbatch,)
+        discounted_reward = np.expand_dims(discounted_reward, axis=1)
+
+        # Compute advantage / TD-error A(s,a)=Q(s,a)-V(s) (Note advantages is an array of dim (nbatch, nactions))
+        advs = np.zeros((len(obs), self.action_size))
         V = self.critic.predict(obs)
-        advs = discounted_reward - V
+        actions_indexes = actions.astype(np.int32)
+        advs[:, actions_indexes] = discounted_reward - V
 
         # Update both actor and critic
         self.critic.update(obs, values)

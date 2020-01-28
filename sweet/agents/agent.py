@@ -38,7 +38,7 @@ class Agent(ABC):
         for reward, done in zip(rewards[::-1], dones[::-1]):
             r = reward + gamma*r*(1.-done) # fixed off by one bug
             discounted.append(r)
-        return discounted[::-1]
+        return np.array(discounted[::-1])
 
     def _lr(self, t=0):
         """

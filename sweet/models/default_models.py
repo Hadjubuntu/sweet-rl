@@ -11,7 +11,7 @@ def str_to_model(model_str: str):
         logging.error(f"Unknow model: {model_str}")
 
 
-def dense(input_shape, output_shape, output_activation='linear'):
+def dense(input_shape, output_shape, output_activation='linear', name=None):
     """
     Build a simple Dense model
 
@@ -34,7 +34,7 @@ def dense(input_shape, output_shape, output_activation='linear'):
     predictions = Dense(output_shape, activation='linear')(x)
 
     # Finally build model
-    model = Model(inputs=inputs, outputs=predictions)
+    model = Model(inputs=inputs, outputs=predictions, name=name)
     model.summary()
 
     return model
