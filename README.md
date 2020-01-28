@@ -1,5 +1,5 @@
 
-[![Build status](https://travis-ci.com/Hadjubuntu/sweet-rl.svg?branch=master)](https://travis-ci.com/Hadjubuntu/sweet-rl)
+[![Build status](https://travis-ci.com/Hadjubuntu/sweet-rl.svg?branch=master)](https://travis-ci.com/Hadjubuntu/sweet-rl)<br />
 ![Sweet-RL](https://raw.githubusercontent.com/Hadjubuntu/sweet-rl/develop/misc/logo.png)
 
 ## Why Sweet-RL
