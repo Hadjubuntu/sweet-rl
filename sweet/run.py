@@ -1,13 +1,3 @@
-__author__ = "Adrien HADJ-SALAH"
-__email__ = "adrien.hadj.salah@gmail.com"
-
-"""
-Entry-point of sweet RL.
-
-Usage:
-    python -m sweet.run -e CartPole-v0
-"""
-
 import sys
 import re
 import multiprocessing
@@ -20,6 +10,17 @@ from sweet.agents.dqn.dqn_agent import DqnAgent
 from sweet.agents.agent_runner import learn
 import logging
 import argparse
+
+__author__ = "Adrien HADJ-SALAH"
+__email__ = "adrien.hadj.salah@gmail.com"
+
+"""
+Entry-point of sweet RL.
+
+Usage:
+    python -m sweet.run -e CartPole-v0
+"""
+
 
 def main(args):
     """

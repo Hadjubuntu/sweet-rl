@@ -19,3 +19,8 @@ model.train_on_batch(x_batch, y_batch) # Training once
 ```
 
 But this is so slow. To speed-up, it is recommanded to write your own gradient descent method and use **@tf.function decorator**
+
+**Work in progres**
+
+test: 
+<td><g-emoji class="g-emoji" alias="heavy_check_mark" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/2714.png">✔️</g-emoji> <sup>Test</sup></td>

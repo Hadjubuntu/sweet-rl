@@ -1,3 +1,7 @@
+"""
+If you find the method learn from train.py a bit harsch with its callback and masked optimization,
+just see this method which is written in old-fashion way
+"""
 import gym
 import logging
 import numpy as np
@@ -7,59 +11,14 @@ import tensorflow as tf
 from sweet.agents.agent_runner import Runner
 from sweet.agents.runner.stop_condition import EpisodeDoneStopCond, NstepsStopCond
 from sweet.agents.dqn.dqn_agent import DqnAgent
-from sweet.common.math import explained_variance
 
 
-def learn(env_name='CartPole-v0'):
-    # Load OpenAI Gym env
-    env = gym.make(env_name)
-
-    # Load DQN agent
-    agent = DqnAgent(
-        state_shape=env.observation_space.shape, 
-        action_size=env.action_space.n)
-
-    total_timesteps = 1e5
-    timesteps = 0
-
-    callback = agent.step_callback
-
-    runner = Runner(env, agent, stop_cond=EpisodeDoneStopCond(), step_callback=callback)
-    tstart = time.time()     
-
-    while timesteps < total_timesteps:
-        # Collect batch of experience
-        obs, next_obs, rewards, actions, dones, values, infos = runner.run()
-
-        # Note: Memorize experience + network update are done in callback fn
-        
-         # Post-processing (logging, ..)
-        nseconds = time.time()-tstart
-        timesteps += len(rewards)
-        fps = int(timesteps/nseconds)
-        
-        mean_episode_length = np.mean([x['steps'] for x in infos])
-        mean_episode_rew = np.mean([x['rewards'] for x in infos])
-
-        # Logging
-        logging.info(f"Update")
-        logging.info(f"total_timesteps={timesteps}")
-        logging.info(f"FPS={fps}")
-        logging.info(f"Mean rewards={mean_episode_rew}")
-        logging.info(f"Mean episode length={mean_episode_length}")
-
-
-
-def learn2(
+def learn_oldfashion(
     env,
     agent,
     timesteps=1e5):
     """
-
-    OBSOLETE
-
-
-    Runner for RL agent: Expriment environment, memorize experiences and execute RL updates.
+    Old-fashion runner for RL agent: Expriment environment, memorize experiences and execute RL updates.
 
     Parameters
     ----------
@@ -113,10 +72,9 @@ def learn2(
 if __name__ == "__main__":
     logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
     
-    # env = gym.make('CartPole-v0')
-    # agent = DqnAgent(
-    #     state_shape=env.observation_space.shape, 
-    #     action_size=env.action_space.n)
-    # learn2(env, agent)
+    env = gym.make('CartPole-v0')
+    agent = DqnAgent(
+        state_shape=env.observation_space.shape, 
+        action_size=env.action_space.n)
 
-    learn()
+    learn_oldfashion(env, agent)
