@@ -2,6 +2,12 @@
 from sweet.agents.agent import Agent
 from sweet.common.schedule import ConstantSchedule, LinearSchedule
 
+import tensorflow.keras.backend as K
+from tensorflow.keras.optimizers import Adam
+from sweet.models.default_models import dense
+from tensorflow.keras.models import Model, Sequential
+from tensorflow.keras.layers import Dense, Input, LSTM, Embedding, Dropout, Activation, Flatten
+
 from collections import deque
 import numpy as np
 import random
@@ -41,13 +47,13 @@ class DqnAgent(Agent):
                 action_size,
                 model='dense',
                 lr=ConstantSchedule(0.01),
-                gamma: float=0.99,
-                epsilon: float=0.9,
-                epsilon_min: float=0.1,
+                gamma: float=0.95,
+                epsilon: float=1.0,
+                epsilon_min: float=0.01,
                 epsilon_decay: float=0.99,
-                replay_buffer: int=5000):
+                replay_buffer: int=1000):
         # Generic initialization
-        super().__init__(lr, model, state_shape, action_size)
+        super().__init__(lr, model, state_shape, action_size)        
 
         # Input/output shapes
         self.state_shape = state_shape
@@ -78,48 +84,65 @@ class DqnAgent(Agent):
         """        
         a = None
         # Reshape obs
-        obs = np.expand_dims(obs, axis=0)        
-        act_values = self.model.predict(obs)
+        obs = np.expand_dims(obs, axis=0)
+        q_values = self.model.predict(obs)
 
         if np.random.rand() <= self.eps:
             a = np.random.randint(low=0, high=self.action_size)
         else:
-            a = np.argmax(act_values[0])
+            a = np.argmax(q_values[0])
 
-        return a, act_values
+        return a, q_values
 
+    def decay_exploration(self, ntimes):
+        for _ in range(ntimes):
+            if self.eps > self.epsilon_min:
+                self.eps *= self.epsilon_decay
+
+    def loss_func(self, layer_action):
+        # Create a loss function that adds the MSE loss to the mean of all squared activations of a specific layer
+        def loss(y_true,y_pred):
+            return K.mean(K.square(y_pred - y_true), axis=-1)
     
-    def update(self, batch_size=32):        
-        if len(self.replay_buffer) > batch_size:
+        # Return a function
+        return loss
+    
+    def update(self, batch_size=16):     
+        if len(self.replay_buffer) >= batch_size:
             self._update(batch_size)
             self.nupdate += 1
 
     def _update(self, batch_size):
         # Sample minibatch from replay buffer
-        minibatch = random.sample(self.replay_buffer, batch_size)
-        history = None
+        minibatch = random.sample(self.replay_buffer, batch_size)        
+        x, y = [], []
 
         # Fit model for each minibatch data
         for batch_data in minibatch:
-            state, next_state, reward, action, done, _ = batch_data
+            state, next_state, reward, action, done, q_pred_at_state_t = batch_data
             target = reward
             
             if not done:
                 next_state = np.expand_dims(next_state, axis=0)
 
                 target = reward + self.gamma * \
-                        np.amax(self.model.predict(next_state)[0])
-            
+                        np.amax(self.model.predict(next_state)[0])            
 
             state =  np.expand_dims(state, axis=0)
-            target_f = self.model.predict(state)     
+            target_f = self.model.predict(state)
             target_f[0][action] = target
-            
+
+            # TODO: optim: use mask to apply loss on action selected  
             
             # Execute gradient descent
-            history = self.model.fit(state, target_f, epochs=1, verbose=0)
+            #loss = self.model.train_on_batch(state, target_f) 
 
-        if self.eps > self.epsilon_min:
-            self.eps *= self.epsilon_decay
+            x.append(state[0])
+            y.append(target_f[0])
         
-        logging.info('mse={} / eps={}'.format(history.history['loss'], self.eps))
+
+        x=np.array(x)
+        y=np.array(y)
+        loss = self.model.train_on_batch(x, y) 
+
+        logging.info('mse={} / eps={}'.format(loss, self.eps))

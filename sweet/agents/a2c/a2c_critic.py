@@ -35,5 +35,5 @@ class A2CCritic():
         """
         Update critic network
         """
-        history = self.model.train_on_batch(obs, values)
-        return history
+        loss = self.model.train_on_batch(obs, values)
+        return loss

@@ -5,6 +5,7 @@ from sweet.agents.a2c.a2c_actor import A2CActor
 from sweet.agents.a2c.a2c_critic import A2CCritic
 
 import numpy as np
+import logging
 
 class A2CAgent(Agent):
     """
@@ -29,7 +30,7 @@ class A2CAgent(Agent):
                 state_shape,
                 action_size,
                 model='dense',
-                lr=0.01,
+                lr=0.001,
                 gamma: float=0.99):
         # Generic initialization
         super().__init__(lr, model, state_shape, action_size)
@@ -88,5 +89,7 @@ class A2CAgent(Agent):
         advs[:, actions_indexes] = discounted_reward - V
 
         # Update both actor and critic
-        self.critic.update(obs, values)
-        self.actor.update(obs, actions, advs)
+        loss_critic = self.critic.update(obs, values)
+        loss_actor = self.actor.update(obs, actions, advs)
+
+        return loss_actor, loss_critic

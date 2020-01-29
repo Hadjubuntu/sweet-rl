@@ -51,5 +51,5 @@ class A2CActor():
         """
         Update actor network
         """
-        history = self.model.train_on_batch(obs, advs)
-        return history
+        loss = self.model.train_on_batch(obs, advs)
+        return loss

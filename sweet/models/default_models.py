@@ -28,9 +28,11 @@ def dense(input_shape, output_shape, output_activation='linear', name=None):
     """
     # Create inputs
     inputs = Input(shape=input_shape)
+    x = inputs
 
     # Create one dense layer and one layer for output
-    x = Dense(64, activation='relu')(inputs)
+    x = Dense(24, activation='tanh')(x)
+    x = Dense(24, activation='tanh')(x)
     predictions = Dense(output_shape, activation='linear')(x)
 
     # Finally build model

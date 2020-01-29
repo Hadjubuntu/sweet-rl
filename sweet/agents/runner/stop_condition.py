@@ -33,7 +33,4 @@ class EpisodeDoneStopCond(StopCond):
         pass
     
     def iterate(self, **kwargs):
-        """
-        Iterate until episode is done
-        """
-        return not kwargs['done'] 
+        return not kwargs['done']
