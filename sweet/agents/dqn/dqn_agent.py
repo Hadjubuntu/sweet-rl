@@ -2,6 +2,7 @@
 from sweet.agents.agent import Agent
 from sweet.common.schedule import ConstantSchedule, LinearSchedule
 
+import tensorflow as tf
 import tensorflow.keras.backend as K
 from tensorflow.keras.optimizers import Adam
 from sweet.models.default_models import dense
@@ -12,6 +13,7 @@ from collections import deque
 import numpy as np
 import random
 import logging
+import time
 
 class DqnAgent(Agent):
     """
@@ -69,6 +71,10 @@ class DqnAgent(Agent):
         # Statistics
         self.nupdate = 0
 
+        # Test direct call TF2
+        self.optimizer = tf.keras.optimizers.Adam(lr=self._lr())
+        self.loss_obj = tf.keras.losses.MeanSquaredError()
+
 
     def memorize(self, batch_data):
         """
@@ -94,6 +100,17 @@ class DqnAgent(Agent):
 
         return a, q_values
 
+    
+    def step_callback(self, data):
+        obs_copy, next_obs, rew, done, action, value = data
+
+        self.memorize([(obs_copy, next_obs, rew, action, done, value)])
+        self.decay_exploration(1)
+
+        # Update network
+        self.update()
+
+
     def decay_exploration(self, ntimes):
         for _ in range(ntimes):
             if self.eps > self.epsilon_min:
@@ -113,6 +130,7 @@ class DqnAgent(Agent):
             self.nupdate += 1
 
     def _update(self, batch_size):
+        start = time.time()
         # Sample minibatch from replay buffer
         minibatch = random.sample(self.replay_buffer, batch_size)        
         x, y = [], []
@@ -126,10 +144,10 @@ class DqnAgent(Agent):
                 next_state = np.expand_dims(next_state, axis=0)
 
                 target = reward + self.gamma * \
-                        np.amax(self.model.predict(next_state)[0])            
+                        np.amax(self.predict(next_state)[0])            
 
             state =  np.expand_dims(state, axis=0)
-            target_f = self.model.predict(state)
+            target_f = self.predict(state)
             target_f[0][action] = target
 
             # TODO: optim: use mask to apply loss on action selected  
@@ -140,9 +158,42 @@ class DqnAgent(Agent):
             x.append(state[0])
             y.append(target_f[0])
         
+        dt_prep_data = time.time() - start
+        #print(f"dt_prep_data={dt_prep_data}")
 
         x=np.array(x)
         y=np.array(y)
-        loss = self.model.train_on_batch(x, y) 
+        # TEMPORARAY loss = self.model.train_on_batch(x, y) 
+        start = time.time()
+        self.train_step(x, y)
+        dt = time.time() - start
+        #print(f"dt train_step={dt}")
 
-        logging.info('mse={} / eps={}'.format(loss, self.eps))
+        #logging.info('mse={} / eps={}'.format(loss, self.eps))
+
+    # [TF 2.0 error: we can't use numpy func in graph mode (eg. with tf.function)] @tf.function
+    def predict(self, x):
+        res = self.model(x)
+        return res.numpy()
+
+    @tf.function
+    def train_step(self, x, y):
+        '''
+            This is a TensorFlow function, run once for each epoch for the
+            whole input. We move forward first, then calculate gradients 
+            with Gradient Tape to move backwards.
+        '''
+        with tf.GradientTape() as tape:
+            predictions = self.model(x)
+            loss = self.loss_obj(y, predictions)
+
+        trainable_vars = self.model.trainable_weights
+
+        gradients = tape.gradient(loss, trainable_vars)
+        self.optimizer.apply_gradients(zip(gradients, trainable_vars))
+
+        # train_loss = tf.keras.metrics.Mean(name='train_loss')
+        # train_metric = tf.keras.metrics.MeanSquaredError(name='train_accuracy')
+
+        # train_loss(loss)
+        # train_metric(y, predictions)

@@ -40,6 +40,12 @@ class Agent(ABC):
             discounted.append(r)
         return np.array(discounted[::-1])
 
+    def step_callback(self, data):
+        """
+        Callback function
+        """
+        pass
+
     def _lr(self, t=0):
         """
         Learning rate computation
@@ -77,4 +83,5 @@ class Agent(ABC):
         base = e if base is None else base
         
         return -(norm_counts * np.log(norm_counts)/np.log(base)).sum()
+
     

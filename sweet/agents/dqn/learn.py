@@ -2,6 +2,7 @@ import gym
 import logging
 import numpy as np
 import time
+import tensorflow as tf
 
 from sweet.agents.agent_runner import Runner
 from sweet.agents.runner.stop_condition import EpisodeDoneStopCond, NstepsStopCond
@@ -21,25 +22,16 @@ def learn(env_name='CartPole-v0'):
     total_timesteps = 1e5
     timesteps = 0
 
-    runner = Runner(env, agent, stop_cond=EpisodeDoneStopCond())
+    callback = agent.step_callback
+
+    runner = Runner(env, agent, stop_cond=EpisodeDoneStopCond(), step_callback=callback)
     tstart = time.time()     
 
     while timesteps < total_timesteps:
         # Collect batch of experience
-        t0 = time.time()
         obs, next_obs, rewards, actions, dones, values, infos = runner.run()
-        dt_xp = time.time()-t0
 
-        # Optimize both actor and critic with gradient descent
-        t0 = time.time()
-        agent.memorize(zip(obs, next_obs, rewards, actions, dones, values))
-        agent.decay_exploration(len(rewards))
-        dt_mem = time.time()-t0
-
-        # Update network
-        t0 = time.time()
-        agent.update()
-        dt_update = time.time()-t0
+        # Note: Memorize experience + network update are done in callback fn
         
          # Post-processing (logging, ..)
         nseconds = time.time()-tstart
@@ -55,7 +47,6 @@ def learn(env_name='CartPole-v0'):
         logging.info(f"FPS={fps}")
         logging.info(f"Mean rewards={mean_episode_rew}")
         logging.info(f"Mean episode length={mean_episode_length}")
-        logging.info(f"perfo dt_xp={dt_xp} / dt_mem={dt_mem} / dt_update={dt_update}")
 
 
 
@@ -122,10 +113,10 @@ def learn2(
 if __name__ == "__main__":
     logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
     
-    env = gym.make('CartPole-v0')
-    agent = DqnAgent(
-        state_shape=env.observation_space.shape, 
-        action_size=env.action_space.n)
-    learn2(env, agent)
+    # env = gym.make('CartPole-v0')
+    # agent = DqnAgent(
+    #     state_shape=env.observation_space.shape, 
+    #     action_size=env.action_space.n)
+    # learn2(env, agent)
 
-    #learn()
+    learn()

@@ -14,7 +14,8 @@ class Runner():
     def __init__(self, 
                 env, 
                 agent: Agent, 
-                stop_cond: StopCond = EpisodeDoneStopCond()):
+                stop_cond: StopCond = EpisodeDoneStopCond(),
+                step_callback = None):
         """
         Runner aims to collect batch of experience
 
@@ -27,6 +28,8 @@ class Runner():
                 RL algorithm agent
             stop_cond: StopCond (default: EpisodeDoneStopCond)
                 Stop condition for collection a batch of experience
+            step_callaback:
+                Callback function at each step function
         """
         self.env = env
         self.agent = agent
@@ -34,6 +37,7 @@ class Runner():
         self.obs = self.env.reset()
         self.episode_steps = 0 # TODO Better in vec_env
         self.episode_rews = 0.0
+        self.step_callback = step_callback
 
     def run(self):
         """
@@ -55,9 +59,15 @@ class Runner():
             next_obs, rew, done, infos = self.env.step(action)
             self.episode_steps += 1
             self.episode_rews += rew
+
+            obs_copy = np.copy(self.obs)           
+
+            # Callback (if specified)
+            if self.step_callback:
+                self.step_callback((obs_copy, next_obs, rew, done, action, value))
             
             # Store all needed data
-            mb_obs.append(np.copy(self.obs))
+            mb_obs.append(obs_copy)
             mb_next_obs.append(next_obs)
             mb_rewards.append(rew)
             mb_actions.append(action)
