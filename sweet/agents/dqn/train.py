@@ -6,7 +6,7 @@ import tensorflow as tf
 
 from sweet.agents.agent_runner import Runner
 from sweet.agents.runner.stop_condition import (
-    EpisodeDoneStopCond, 
+    EpisodeDoneStopCond,
     NstepsStopCond
 )
 from sweet.agents.dqn.dqn_agent import DqnAgent
@@ -52,10 +52,10 @@ def learn(env_name='CartPole-v0'):
         """
 
         # Post-processing (logging, ..)
-        nseconds = time.time()-tstart
+        nseconds = time.time() - tstart
         timesteps += len(rewards)
-        fps = int(timesteps/nseconds)
-        
+        fps = int(timesteps / nseconds)
+
         mean_episode_length = np.mean([x['steps'] for x in infos])
         mean_episode_rew = np.mean([x['rewards'] for x in infos])
 
@@ -65,6 +65,7 @@ def learn(env_name='CartPole-v0'):
         logging.info(f"FPS={fps}")
         logging.info(f"Mean rewards={mean_episode_rew}")
         logging.info(f"Mean episode length={mean_episode_length}")
+
 
 if __name__ == "__main__":
     logging.basicConfig(

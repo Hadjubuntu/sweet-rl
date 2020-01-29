@@ -16,28 +16,29 @@ def exec_runner(env_name='CartPole-v0'):
 
     # Load DQN agent
     agent = A2CAgent(
-        state_shape=env.observation_space.shape, 
+        state_shape=env.observation_space.shape,
         action_size=env.action_space.n)
 
     total_timesteps = 1e5
     nenvs = 1
     nsteps = 128
     nbatch = nenvs * nsteps
-    nudpates = int(total_timesteps//nbatch+1)
+    nudpates = int(total_timesteps // nbatch + 1)
 
-    runner = Runner(env, agent, stop_cond=NstepsStopCond(nsteps))    
-    tstart = time.time() 
+    runner = Runner(env, agent, stop_cond=NstepsStopCond(nsteps))
+    tstart = time.time()
 
     for nupdate in range(1, nudpates):
         # Collect mini-batch of experience
         obs, _, rewards, actions, dones, values, infos = runner.run()
 
         # Optimize both actor and critic with gradient descent
-        loss_actor, loss_critic = agent.update(obs, rewards, actions, dones, values)
+        loss_actor, loss_critic = agent.update(
+            obs, rewards, actions, dones, values)
 
         # Post-processing (logging, ..)
-        nseconds = time.time()-tstart
-        fps = int((nupdate*nbatch)/nseconds)
+        nseconds = time.time() - tstart
+        fps = int((nupdate * nbatch) / nseconds)
         expl_variance = explained_variance(np.squeeze(values), rewards)
         mean_episode_length = np.mean([x['steps'] for x in infos])
         mean_episode_rew = np.mean([x['rewards'] for x in infos])
@@ -54,5 +55,7 @@ def exec_runner(env_name='CartPole-v0'):
 
 
 if __name__ == "__main__":
-    logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
+    logging.basicConfig(
+        format='%(levelname)s:%(message)s',
+        level=logging.DEBUG)
     exec_runner()

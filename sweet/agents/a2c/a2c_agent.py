@@ -7,11 +7,12 @@ from sweet.agents.a2c.a2c_critic import A2CCritic
 import numpy as np
 import logging
 
+
 class A2CAgent(Agent):
     """
     Simple A2C (Asynchronous Actor-Critic) implementation
 
-    paper: https://arxiv.org/pdf/1602.01783.pdf    
+    paper: https://arxiv.org/pdf/1602.01783.pdf
 
     Parameters
     ----------
@@ -26,12 +27,13 @@ class A2CAgent(Agent):
         gamma: float
             Discount factor
     """
-    def __init__(self, 
-                state_shape,
-                action_size,
-                model='dense',
-                lr=0.001,
-                gamma: float=0.99):
+
+    def __init__(self,
+                 state_shape,
+                 action_size,
+                 model='dense',
+                 lr=0.001,
+                 gamma: float = 0.95):
         # Generic initialization
         super().__init__(lr, model, state_shape, action_size)
 
@@ -76,20 +78,23 @@ class A2CAgent(Agent):
     def update(self, obs, rewards, actions, dones, values):
         """
         Update actor and critic network with batch of datas
-        """  
-        discounted_reward = self.discount_with_dones(rewards, dones, self.gamma)
+        """
+        discounted_reward = self.discount_with_dones(
+            rewards, dones, self.gamma)
 
-        # Reshape discounted_reward to have (nbatch, 1) dimension instead of (nbatch,)
+        # Reshape discounted_reward to have (nbatch, 1) dimension instead of
+        # (nbatch,)
         discounted_reward = np.expand_dims(discounted_reward, axis=1)
 
-        # Compute advantage / TD-error A(s,a)=Q(s,a)-V(s) (Note advantages is an array of dim (nbatch, nactions))
+        # Compute advantage / TD-error A(s,a)=Q(s,a)-V(s) (Note advantages is
+        # an array of dim (nbatch, nactions))
         advs = np.zeros((len(obs), self.action_size))
         V = self.critic.predict(obs)
         actions_indexes = actions.astype(np.int32)
         advs[:, actions_indexes] = discounted_reward - V
 
         # Update both actor and critic
-        loss_critic = self.critic.update(obs, values)
+        loss_critic = self.critic.update(obs, discounted_reward)
         loss_actor = self.actor.update(obs, actions, advs)
 
         return loss_actor, loss_critic

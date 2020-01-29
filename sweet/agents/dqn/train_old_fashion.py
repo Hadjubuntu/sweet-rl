@@ -1,6 +1,6 @@
 """
-If you find the method learn from train.py a bit harsch with its callback and masked optimization,
-just see this method which is written in old-fashion way
+If you find the method learn from train.py a bit harsch with its callback
+and masked optimization, just see this method which is written in old-fashion way
 """
 import gym
 import logging
@@ -9,16 +9,19 @@ import time
 import tensorflow as tf
 
 from sweet.agents.agent_runner import Runner
-from sweet.agents.runner.stop_condition import EpisodeDoneStopCond, NstepsStopCond
+from sweet.agents.runner.stop_condition import (
+    EpisodeDoneStopCond, NstepsStopCond
+)
 from sweet.agents.dqn.dqn_agent import DqnAgent
 
 
 def learn_oldfashion(
-    env,
-    agent,
-    timesteps=1e5):
+        env,
+        agent,
+        timesteps=1e5):
     """
-    Old-fashion runner for RL agent: Expriment environment, memorize experiences and execute RL updates.
+    Old-fashion runner for RL agent: Expriment environment,
+    memorize experiences and execute RL updates.
 
     Parameters
     ----------
@@ -54,27 +57,32 @@ def learn_oldfashion(
 
             obs = next_obs
             steps += 1
-            total_timesteps  += 1
+            total_timesteps += 1
             rewards.append(rew)
 
             if done:
                 sum_rewards.append(np.sum(rewards))
-                logging.info("Episode {} done in {} steps / eps={}".format(nepisode, steps, agent.eps))
+                logging.info(
+                    "Episode {} done in {} steps / eps={}".format(
+                        nepisode, steps, agent.eps)
+                )
                 nepisode += 1
 
-        #env.render()
-    
+        # env.render()
+
     import matplotlib.pyplot as plt
     plt.plot(sum_rewards)
     plt.show()
 
 
 if __name__ == "__main__":
-    logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
-    
+    logging.basicConfig(
+        format='%(levelname)s:%(message)s',
+        level=logging.DEBUG)
+
     env = gym.make('CartPole-v0')
     agent = DqnAgent(
-        state_shape=env.observation_space.shape, 
+        state_shape=env.observation_space.shape,
         action_size=env.action_space.n)
 
     learn_oldfashion(env, agent)

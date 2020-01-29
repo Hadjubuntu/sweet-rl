@@ -5,14 +5,16 @@ import time
 import tensorflow as tf
 
 from sweet.agents.agent_runner import Runner
-from sweet.agents.runner.stop_condition import EpisodeDoneStopCond, NstepsStopCond
+from sweet.agents.runner.stop_condition import (
+    EpisodeDoneStopCond, NstepsStopCond
+)
 from sweet.agents.dqn.dqn_agent import DqnAgent
 from sweet.common.math import explained_variance
 
 
 def train_dqn_batch(env_name='CartPole-v0'):
     """
-    Faster version of DQN train classical method: 
+    Faster version of DQN train classical method:
     Here we collect batch of data before updating neural network.
     Downside: convergence is less stable
 
@@ -24,7 +26,7 @@ def train_dqn_batch(env_name='CartPole-v0'):
 
     # Load DQN agent
     agent = DqnAgent(
-        state_shape=env.observation_space.shape, 
+        state_shape=env.observation_space.shape,
         action_size=env.action_space.n,
         replay_buffer=50000)
 
@@ -32,7 +34,7 @@ def train_dqn_batch(env_name='CartPole-v0'):
     timesteps = 0
 
     runner = Runner(env, agent, stop_cond=NstepsStopCond(32))
-    tstart = time.time()     
+    tstart = time.time()
 
     while timesteps < total_timesteps:
         # Collect batch of experience
@@ -44,12 +46,11 @@ def train_dqn_batch(env_name='CartPole-v0'):
         # update network
         agent.update(batch_size=32)
 
-
-         # Post-processing (logging, ..)
-        nseconds = time.time()-tstart
+        # Post-processing (logging, ..)
+        nseconds = time.time() - tstart
         timesteps += len(rewards)
-        fps = int(timesteps/nseconds)
-        
+        fps = int(timesteps / nseconds)
+
         mean_episode_length = np.mean([x['steps'] for x in infos])
         mean_episode_rew = np.mean([x['rewards'] for x in infos])
 
@@ -61,8 +62,9 @@ def train_dqn_batch(env_name='CartPole-v0'):
         logging.info(f"Mean episode length={mean_episode_length}")
 
 
-
 if __name__ == "__main__":
-    logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
-    
+    logging.basicConfig(
+        format='%(levelname)s:%(message)s',
+        level=logging.DEBUG)
+
     train_dqn_batch()
