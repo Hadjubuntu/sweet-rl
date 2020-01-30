@@ -11,9 +11,12 @@ from sweet.agents.a2c.a2c_agent import A2CAgent
 
 from collections import deque
 
+
 def learn(
-    env_name='CartPole-v0',
-    total_timesteps=1e5
+    env_name='Breakout-v0',
+    total_timesteps=1e5,
+    nenvs=1,
+    nsteps=32
 ):
     # Load OpenAI Gym env
     env = gym.make(env_name)
@@ -46,7 +49,7 @@ def learn(
         nseconds = time.time() - tstart
         fps = int((nupdate * nbatch) / nseconds)
         expl_variance = explained_variance(np.squeeze(values), rewards)
-        
+
         steps = [x['steps'] for x in infos]
         rewards = [x['rewards'] for x in infos]
 

@@ -17,12 +17,6 @@ from tensorflow.keras.models import Model, Sequential
 from tensorflow.keras.layers import Dense, Input, LSTM, Embedding, Dropout, Activation, Flatten
 
 
-class ProbabilityDistribution(tf.keras.Model):
-    def call(self, logits):
-        # sample a random categorical action from given logits
-        return tf.squeeze(tf.random.categorical(logits, 1), axis=-1)
-
-
 def pi_model(input_shape, output_shape):
     # Create inputs
     inputs = Input(shape=input_shape)
@@ -31,6 +25,7 @@ def pi_model(input_shape, output_shape):
 
     # Create one dense layer and one layer for output
     x = Dense(128, activation='relu')(x)
+    x = Flatten()(x)
     logits = Dense(output_shape)(x)
 
     # Finally build model
@@ -74,14 +69,14 @@ class A2CActor(Agent):
             optimizer=self.optimizer
         )
 
-        self.dist = ProbabilityDistribution()
-    
     def loss_func(self, _entropy_coeff=0.0001):
         """
-        Custom loss func to add entropy
+        Loss for actor: policy loss + entropy
         """
-        # FIXME forced to use sparse categorical crossentropy due to y_true coming from actions without one-hot encoding
-        weighted_sparse_ce = kls.SparseCategoricalCrossentropy(from_logits=True)
+        #  FIXME forced to use sparse categorical crossentropy due to y_true
+        # coming from actions without one-hot encoding
+        weighted_sparse_ce = kls.SparseCategoricalCrossentropy(
+            from_logits=True)
         entropy_coeff = _entropy_coeff
 
         def pi_loss(y_true, y_pred_and_advs):
@@ -99,11 +94,11 @@ class A2CActor(Agent):
             policy_loss = tf.reduce_mean(advs * neglogp)
 
             entropy_loss = kls.categorical_crossentropy(
-                    y_pred, y_pred,
-                    from_logits=True
+                y_pred, y_pred,
+                from_logits=True
             )
 
-            return policy_loss - entropy_coeff*entropy_loss
+            return policy_loss - entropy_coeff * entropy_loss
 
         # Return a function
         return pi_loss
@@ -112,12 +107,14 @@ class A2CActor(Agent):
         """
         Compute current policy action
         """
-        action_logits, advs = self.model([obs, np.zeros((obs.shape[0], 1))])
+        # As we need advs to pass in model, create a zero vector
+        obs = obs.astype(np.float32)  # FIXME : force for breakout..
+        zero_advs = np.zeros((obs.shape[0], 1))
 
-        action = self.dist.predict(action_logits)[0]  # TODO  FIXME very slow
-        # print("------------------")
-        # print(f"logits={action_logits}")
-        # print(f"action={action}")
+        action_logits, advs = self.model([obs, zero_advs])
+
+        action_sample_np = self.sample(action_logits).numpy()
+        action = action_sample_np[0]
 
         return action
 
@@ -125,6 +122,7 @@ class A2CActor(Agent):
         """
         Update actor network
         """
+        obs = obs.astype(np.float32)  # FIXME : force for breakout..
         loss_pi = self.tf2_fast_apply_gradients(obs, actions, advs)
         return loss_pi
 

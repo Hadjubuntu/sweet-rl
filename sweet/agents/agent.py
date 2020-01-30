@@ -43,6 +43,12 @@ class Agent(ABC):
         if model:
             self.model = self._build_model(model, state_shape, action_size)
 
+    def sample(self, logits):
+        """
+        Sample distribution
+        """
+        return tf.squeeze(tf.random.categorical(logits, 1), axis=-1)
+
     def tf2_fast_predict(self, x):
         # [TF 2.0 error: we can't use numpy func in graph mode
         # (eg. with tf.function)] @tf.function

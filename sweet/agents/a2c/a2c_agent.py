@@ -73,14 +73,15 @@ class A2CAgent(Agent):
         action = self.actor.act(obs)
         value = self.critic.predict(obs)
 
-        # # Proability distribution to action identifier
-        # action = np.argmax(action)
-
         return action, value
 
     def update(self, obs, rewards, actions, dones, values):
         """
-        Update actor and critic network with batch of datas
+        Update actor and critic network with batch of datas.
+        For critic, data are the discounted rewards.
+        From those discounted rewards, we can compute the advantages as
+        Adv(s,a) = Q(s,a) - V(s)
+        For actor, data are actions taken and computed advantages.
         """
         discounted_reward = self.discount_with_dones(
             rewards, dones, self.gamma)
@@ -93,7 +94,7 @@ class A2CAgent(Agent):
         # an array of dim (nbatch, nactions))
         advs = np.zeros((len(obs), 1))
         V = self.critic.predict(obs)
-        
+
         advs[:] = discounted_reward - V
 
         # Update both actor and critic
