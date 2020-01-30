@@ -9,6 +9,7 @@ from sweet.common.math import explained_variance
 
 from sweet.agents.a2c.a2c_agent import A2CAgent
 
+from collections import deque
 
 def learn(
     env_name='CartPole-v0',
@@ -23,12 +24,15 @@ def learn(
         action_size=env.action_space.n)
 
     nenvs = 1
-    nsteps = 128
+    nsteps = 32
     nbatch = nenvs * nsteps
     nudpates = int(total_timesteps // nbatch + 1)
 
     runner = Runner(env, agent, stop_cond=NstepsStopCond(nsteps))
     tstart = time.time()
+
+    # Collect infos on last 10 batch runs
+    u_steps, u_rewards = deque(maxlen=10), deque(maxlen=10)
 
     for nupdate in range(1, nudpates):
         # Collect mini-batch of experience
@@ -42,8 +46,16 @@ def learn(
         nseconds = time.time() - tstart
         fps = int((nupdate * nbatch) / nseconds)
         expl_variance = explained_variance(np.squeeze(values), rewards)
-        mean_episode_length = np.mean([x['steps'] for x in infos])
-        mean_episode_rew = np.mean([x['rewards'] for x in infos])
+        
+        steps = [x['steps'] for x in infos]
+        rewards = [x['rewards'] for x in infos]
+
+        if len(steps):
+            u_steps.append(np.mean(steps))
+            u_rewards.append(np.mean(rewards))
+
+        mean_episode_length = np.mean(u_steps)
+        mean_episode_rew = np.mean(u_rewards)
 
         # Logging
         logging.info(f"Update #{nupdate}")

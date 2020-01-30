@@ -72,6 +72,8 @@ class A2CAgent:
             for step in range(batch_sz):
                 observations[step] = next_obs.copy()
                 actions[step], values[step] = self.model.action_value(next_obs[None, :])
+                if step == 0:
+                    print(f"value determined= {values[step]}")
                 next_obs, rewards[step], dones[step], _ = env.step(actions[step])
 
                 ep_rews[-1] += rewards[step]
@@ -86,8 +88,10 @@ class A2CAgent:
             acts_and_advs = np.concatenate([actions[:, None], advs[:, None]], axis=-1)
             # performs a full training step on the collected batch
             # note: no need to mess around with gradients, Keras API handles it
+
+            print(f"Returns to fit= {returns}")
             losses = self.model.train_on_batch(observations, [acts_and_advs, returns])
-            logging.debug("[%d/%d] Losses: %s" % (update+1, updates, losses))
+            logging.info("[%d/%d] Losses: %s" % (update+1, updates, losses))
         return ep_rews
 
     def test(self, env, render=False):

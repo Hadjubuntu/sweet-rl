@@ -34,8 +34,8 @@ class A2CAgent(Agent):
                  state_shape,
                  action_size,
                  model='dense',
-                 lr_actor=0.002,
-                 lr_critic=0.001,
+                 lr_actor=0.004,
+                 lr_critic=0.002,
                  gamma: float = 0.95):
         # Generic initialization
         super().__init__(lr_actor, model, state_shape, action_size)
@@ -93,7 +93,6 @@ class A2CAgent(Agent):
         # an array of dim (nbatch, nactions))
         advs = np.zeros((len(obs), 1))
         V = self.critic.predict(obs)
-        actions_indexes = actions.astype(np.int32)
         
         advs[:] = discounted_reward - V
 

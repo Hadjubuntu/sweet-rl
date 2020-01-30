@@ -31,7 +31,7 @@ def pi_model(input_shape, output_shape):
 
     # Create one dense layer and one layer for output
     x = Dense(128, activation='relu')(x)
-    logits = Dense(output_shape, activation='softmax')(x)
+    logits = Dense(output_shape)(x)
 
     # Finally build model
     model = Model(inputs=[inputs, advs], outputs=[logits, advs], name="pi")
@@ -85,7 +85,8 @@ class A2CActor(Agent):
         only thing missing, we didn't succeed to pass adv through model input
         see why
         """
-        weighted_sparse_ce = kls.CategoricalCrossentropy(from_logits=True)
+        # FIXME forced to use sparse categorical crossentropy due to y_true coming from actions without one-hot encoding
+        weighted_sparse_ce = kls.SparseCategoricalCrossentropy(from_logits=True)
         entropy_coeff = _entropy_coeff
 
         def pi_loss(y_true, y_pred_and_advs):

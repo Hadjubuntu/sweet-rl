@@ -35,7 +35,7 @@ class Runner():
         self.agent = agent
         self.stop_cond = stop_cond
         self.obs = self.env.reset()
-        self.episode_steps = 0 # TODO Better in vec_env
+        self.episode_steps = 0  # TODO Better in vec_env
         self.episode_rews = 0.0
         self.step_callback = step_callback
 
@@ -60,7 +60,7 @@ class Runner():
             self.episode_steps += 1
             self.episode_rews += rew
 
-            obs_copy = np.copy(self.obs)           
+            obs_copy = np.copy(self.obs)
 
             # Callback (if specified)
             if self.step_callback:
