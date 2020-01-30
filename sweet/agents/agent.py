@@ -113,13 +113,3 @@ class Agent(ABC):
         model.compile(loss=self.loss, optimizer=self.optimizer)
 
         return model
-
-    def _entropy(self, labels, base=None):
-        """
-        Compute entry of input labels
-        """
-        value, counts = np.unique(labels, return_counts=True)
-        norm_counts = counts / counts.sum()
-        base = e if base is None else base
-
-        return -(norm_counts * np.log(norm_counts) / np.log(base)).sum()
