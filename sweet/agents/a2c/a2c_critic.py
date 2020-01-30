@@ -10,7 +10,9 @@ from tensorflow.keras.losses import MeanSquaredError
 class A2CCritic(Agent):
     def __init__(self, lr, input_shape):
         """
-        Initialize critic network of A2C
+        Critic part of A2C is an estimator of the value V(s).
+        It is used to compute the function advantage: Adv(s,a)=Q(s,a)-V(s)
+        during policy optimization.
 
         Parameters
         ----------

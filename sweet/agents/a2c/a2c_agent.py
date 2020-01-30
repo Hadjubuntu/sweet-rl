@@ -34,7 +34,7 @@ class A2CAgent(Agent):
                  state_shape,
                  action_size,
                  model='dense',
-                 lr_actor=0.0005,
+                 lr_actor=0.002,
                  lr_critic=0.001,
                  gamma: float = 0.95):
         # Generic initialization
@@ -73,8 +73,8 @@ class A2CAgent(Agent):
         action = self.actor.act(obs)
         value = self.critic.predict(obs)
 
-        # Proability distribution to action identifier
-        action = np.argmax(action)
+        # # Proability distribution to action identifier
+        # action = np.argmax(action)
 
         return action, value
 

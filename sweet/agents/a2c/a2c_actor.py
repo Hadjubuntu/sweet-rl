@@ -7,6 +7,7 @@ from sweet.models.default_models import dense
 from sweet.agents.agent import Agent
 
 # Improve TODO
+import numpy as np
 import tensorflow as tf
 import tensorflow.keras.layers as kl
 import tensorflow.keras.losses as kls
@@ -29,15 +30,14 @@ def pi_model(input_shape, output_shape):
     x = inputs
 
     # Create one dense layer and one layer for output
-    x = Dense(32, activation='tanh')(x)
-    x = Dense(32, activation='tanh')(x)
+    x = Dense(128, activation='relu')(x)
     logits = Dense(output_shape, activation='softmax')(x)
 
     # Finally build model
-    model = Model(inputs=[inputs, advs], outputs=logits, name="pi")
+    model = Model(inputs=[inputs, advs], outputs=[logits, advs], name="pi")
     model.summary()
 
-    return model, advs
+    return model
 
 
 class A2CActor(Agent):
@@ -65,16 +65,18 @@ class A2CActor(Agent):
         )
 
         # Output of this model are logits (log probability)
-        self.model, advs = pi_model(input_shape, output_shape)
-        self.loss = self.loss_func(advs)
+        self.model = pi_model(input_shape, output_shape)
+        self.loss = self.loss_func(_entropy_coeff=0.0001)
 
         # Initialize model
         self.model.compile(
             loss=self.loss,
             optimizer=self.optimizer
         )
+
+        self.dist = ProbabilityDistribution()
     
-    def loss_func(self, _advs):
+    def loss_func(self, _entropy_coeff=0.0001):
         """
         Custom loss func to add entropy
 
@@ -83,10 +85,11 @@ class A2CActor(Agent):
         only thing missing, we didn't succeed to pass adv through model input
         see why
         """
-        advs = _advs
         weighted_sparse_ce = kls.CategoricalCrossentropy(from_logits=True)
+        entropy_coeff = _entropy_coeff
 
-        def pi_loss(y_true, y_pred):
+        def pi_loss(y_true, y_pred_and_advs):
+            y_pred, advs = y_pred_and_advs[0], y_pred_and_advs[1]
             # First, one-hot encoding of true value y_true
             y_true = tf.expand_dims(tf.cast(y_true, tf.int32), axis=1)
             # No-need ? y_true = tf.one_hot(, self.action_size)
@@ -99,7 +102,12 @@ class A2CActor(Agent):
             )
             policy_loss = tf.reduce_mean(advs * neglogp)
 
-            return policy_loss
+            entropy_loss = kls.categorical_crossentropy(
+                    y_pred, y_pred,
+                    from_logits=True
+            )
+
+            return policy_loss - entropy_coeff*entropy_loss
 
         # Return a function
         return pi_loss
@@ -136,14 +144,20 @@ class A2CActor(Agent):
         """
         Compute current policy action
         """
-        return self.tf2_fast_predict(obs)
+        action_logits, advs = self.model([obs, np.zeros((obs.shape[0], 1))])
+
+        action = self.dist.predict(action_logits)[0]  # TODO  FIXME very slow
+        # print("------------------")
+        # print(f"logits={action_logits}")
+        # print(f"action={action}")
+
+        return action
 
     def update(self, obs, actions, advs):
         """
         Update actor network
         """
         loss_pi = self.tf2_fast_apply_gradients(obs, actions, advs)
-        print(f"loss_pi={loss_pi}")
         return loss_pi
 
     # Can't eager to ops: @tf.function
