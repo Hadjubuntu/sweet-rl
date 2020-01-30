@@ -10,7 +10,7 @@ Trying to keep code quality, algorithms performance and diversity as high as pos
 
 ## Getting started
 
-**Install sweet-rl**
+### Install sweet-rl
 First, create a virtualenv:  
 ```
 python3.x -m venv ~/.virtualenvs/sweet/ # or: virtualenv ~/.virtualenvs/sweet/ -p python3
@@ -21,13 +21,13 @@ And then, install project dependancies:
 make install # or pip install -e .
 ```
 
-**First execution**
+### First execution
 Run a DQN training:  
 ```
 python sweet/agents/dqn/dqn_runner.py # Work in progress
 ```
 
-## Algorithms implemented
+## Features, algorithms implemented
 
 | Algorithm     | Implementation status |               |
 | ------------- | -------------         | ------------- |
@@ -35,9 +35,11 @@ python sweet/agents/dqn/dqn_runner.py # Work in progress
 | A2C           | Ok                    |               |
 | PPO           | Soon                  |               |
 
+
 ## Troubleshootings
 
 * Tensorflow 2.x doesn't work with Python 3.8 so far, so only Python versions 3.6 and 3.7 are supported
+
 
 ## History/Author(s)
 

@@ -6,14 +6,23 @@ import tensorflow as tf
 from tensorflow.keras.models import Model, Sequential
 from tensorflow.keras.losses import MeanSquaredError
 from tensorflow.keras.optimizers import Adam
-
+from tensorflow.keras.metrics import Mean
 from sweet.models.default_models import dense
+
 
 class Agent(ABC):
     """
     Generic class for RL algorithm
-    """    
-    def __init__(self, lr, model, state_shape, action_size, optimizer=Adam, loss=MeanSquaredError):
+    """
+
+    def __init__(
+            self,
+            lr,
+            model,
+            state_shape,
+            action_size,
+            optimizer=Adam,
+            loss=MeanSquaredError):
         """
         Generic initialization of RL algorithm
         """
@@ -26,12 +35,17 @@ class Agent(ABC):
 
         # Initialize model/optimizer and loss
         self.optimizer = optimizer(lr=self._lr())
-        self.loss = loss()
-        self.model = self._build_model(model, state_shape, action_size)
+        self.eval_loss = Mean('loss')
 
-        
-    # [TF 2.0 error: we can't use numpy func in graph mode (eg. with tf.function)] @tf.function
+        self.loss, self.model = None, None
+        if loss:
+            self.loss = loss()
+        if model:
+            self.model = self._build_model(model, state_shape, action_size)
+
     def tf2_fast_predict(self, x):
+        # [TF 2.0 error: we can't use numpy func in graph mode
+        # (eg. with tf.function)] @tf.function
         res = self.model(x)
         return res.numpy()
 
@@ -39,7 +53,7 @@ class Agent(ABC):
     def tf2_fast_apply_gradients(self, x, y):
         """
         This is a TensorFlow function, run once for each epoch for the
-        whole input. We move forward first, then calculate gradients 
+        whole input. We move forward first, then calculate gradients
         with Gradient Tape to move backwards.
         """
         with tf.GradientTape() as tape:
@@ -51,11 +65,7 @@ class Agent(ABC):
         gradients = tape.gradient(loss, trainable_vars)
         self.optimizer.apply_gradients(zip(gradients, trainable_vars))
 
-        # train_loss = tf.keras.metrics.Mean(name='train_loss')
-        # train_metric = tf.keras.metrics.MeanSquaredError(name='train_accuracy')
-
-        # train_loss(loss)
-        # train_metric(y, predictions)
+        return self.eval_loss(loss)
 
     @abstractmethod
     def act(self, obs):
@@ -72,7 +82,7 @@ class Agent(ABC):
         discounted = []
         r = 0
         for reward, done in zip(rewards[::-1], dones[::-1]):
-            r = reward + gamma*r*(1.-done) # fixed off by one bug
+            r = reward + gamma * r * (1. - done)  # fixed off by one bug
             discounted.append(r)
         return np.array(discounted[::-1])
 
@@ -101,7 +111,7 @@ class Agent(ABC):
             model = dense(input_shape=state_shape, output_shape=action_shape)
 
         model.compile(loss=self.loss, optimizer=self.optimizer)
-        
+
         return model
 
     def _entropy(self, labels, base=None):
@@ -111,7 +121,5 @@ class Agent(ABC):
         value, counts = np.unique(labels, return_counts=True)
         norm_counts = counts / counts.sum()
         base = e if base is None else base
-        
-        return -(norm_counts * np.log(norm_counts)/np.log(base)).sum()
 
-    
+        return -(norm_counts * np.log(norm_counts) / np.log(base)).sum()

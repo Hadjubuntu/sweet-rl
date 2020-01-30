@@ -22,8 +22,10 @@ class A2CAgent(Agent):
             Number of actions (Discrete only so far)
         model: Model or str
             Neural network model or string representing NN (dense, cnn)
-        lr: float or sweet.common.schedule.Schedule
-            Learning rate
+        lr_actor: float or sweet.common.schedule.Schedule
+            Learning rate for Actor (Policy)
+        lr_critic: float or sweet.common.schedule.Schedule
+            Learning rate for Critic (Value estimator)
         gamma: float
             Discount factor
     """
@@ -32,14 +34,15 @@ class A2CAgent(Agent):
                  state_shape,
                  action_size,
                  model='dense',
-                 lr=0.001,
+                 lr_actor=0.0005,
+                 lr_critic=0.001,
                  gamma: float = 0.95):
         # Generic initialization
-        super().__init__(lr, model, state_shape, action_size)
+        super().__init__(lr_actor, model, state_shape, action_size)
 
         # TODO pass model actor/critic
-        self.actor = A2CActor(lr, state_shape, action_size)
-        self.critic = A2CCritic(lr, state_shape)
+        self.actor = A2CActor(lr_actor, state_shape, action_size)
+        self.critic = A2CCritic(lr_critic, state_shape)
 
         # Input/output shapes
         self.state_shape = state_shape
@@ -88,10 +91,11 @@ class A2CAgent(Agent):
 
         # Compute advantage / TD-error A(s,a)=Q(s,a)-V(s) (Note advantages is
         # an array of dim (nbatch, nactions))
-        advs = np.zeros((len(obs), self.action_size))
+        advs = np.zeros((len(obs), 1))
         V = self.critic.predict(obs)
         actions_indexes = actions.astype(np.int32)
-        advs[:, actions_indexes] = discounted_reward - V
+        
+        advs[:] = discounted_reward - V
 
         # Update both actor and critic
         loss_critic = self.critic.update(obs, discounted_reward)

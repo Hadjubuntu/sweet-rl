@@ -10,7 +10,10 @@ from sweet.common.math import explained_variance
 from sweet.agents.a2c.a2c_agent import A2CAgent
 
 
-def exec_runner(env_name='CartPole-v0'):
+def learn(
+    env_name='CartPole-v0',
+    total_timesteps=1e5
+):
     # Load OpenAI Gym env
     env = gym.make(env_name)
 
@@ -19,7 +22,6 @@ def exec_runner(env_name='CartPole-v0'):
         state_shape=env.observation_space.shape,
         action_size=env.action_space.n)
 
-    total_timesteps = 1e5
     nenvs = 1
     nsteps = 128
     nbatch = nenvs * nsteps
@@ -58,4 +60,5 @@ if __name__ == "__main__":
     logging.basicConfig(
         format='%(levelname)s:%(message)s',
         level=logging.DEBUG)
-    exec_runner()
+
+    learn()

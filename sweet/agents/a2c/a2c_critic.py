@@ -47,8 +47,7 @@ class A2CCritic(Agent):
         """
         Update critic network
         """
-        loss = 0.0  # FIXME
-        self.tf2_fast_apply_gradients(obs, values)
+        loss = self.tf2_fast_apply_gradients(obs, values)
         return loss
 
     def act(self, obs):
