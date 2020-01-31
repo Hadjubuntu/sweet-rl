@@ -12,7 +12,7 @@ setup(
     install_requires=[
         'numpy==1.18.1',
         'tensorflow==2.1.0',
-        'pytorch==1.0.2',
+        'torch==1.4.0',
         'gym==0.15.4',
         'pandas==0.25.3',
         'pytest==5.2.2',

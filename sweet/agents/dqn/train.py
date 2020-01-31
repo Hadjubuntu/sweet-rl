@@ -6,11 +6,11 @@ from pathlib import Path
 
 from sweet.common.logging import init_logger
 from sweet.agents.agent_runner import Runner
+from sweet.agents.dqn.dqn_agent import DqnAgent
 from sweet.agents.runner.stop_condition import (
     EpisodeDoneStopCond,
     NstepsStopCond
 )
-from sweet.agents.dqn.dqn_agent import DqnAgent
 
 logger = logging.getLogger(__name__)
 

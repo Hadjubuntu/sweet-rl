@@ -1,9 +1,8 @@
+import numpy as np
 
 from sweet.agents.agent import Agent
 from sweet.agents.a2c.a2c_actor import A2CActor
 from sweet.agents.a2c.a2c_critic import A2CCritic
-
-import numpy as np
 
 
 class A2CAgent(Agent):

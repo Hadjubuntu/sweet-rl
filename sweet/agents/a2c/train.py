@@ -3,15 +3,14 @@ import logging
 import numpy as np
 import time
 from pathlib import Path
+from collections import deque
 
 from sweet.common.logging import init_logger
 from sweet.agents.agent_runner import Runner
 from sweet.agents.runner.stop_condition import NstepsStopCond
 from sweet.common.math import explained_variance
-
 from sweet.agents.a2c.a2c_agent import A2CAgent
 
-from collections import deque
 
 logger = logging.getLogger(__name__)
 

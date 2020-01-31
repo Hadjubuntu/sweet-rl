@@ -1,16 +1,17 @@
 """
 If you find the method learn from train.py a bit harsch with its callback
-and masked optimization, just see this method which is written in old-fashion way
+and masked optimization, just see this method which is written
+in old-fashion way
 """
 import gym
 import logging
 import numpy as np
 
 from sweet.common.logging import init_logger
+from sweet.agents.dqn.dqn_agent import DqnAgent
 from sweet.agents.runner.stop_condition import (
     EpisodeDoneStopCond, NstepsStopCond
 )
-from sweet.agents.dqn.dqn_agent import DqnAgent
 
 logger = logging.getLogger(__name__)
 

@@ -2,11 +2,6 @@
 from sweet.agents.agent import Agent
 from sweet.common.schedule import ConstantSchedule
 
-from tensorflow.keras.layers import (
-    Dense, Input, LSTM, Embedding, Dropout, Activation, Flatten
-)
-
-
 from collections import deque
 import numpy as np
 import random
