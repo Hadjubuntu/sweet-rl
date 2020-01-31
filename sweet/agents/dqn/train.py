@@ -21,13 +21,13 @@ def learn(
     env_name='CartPole-v0',
     total_timesteps=1e5,
     lr=0.01,
-    gamma: float=0.95,
-    epsilon: float=1.0,
-    epsilon_min: float=0.01,
-    epsilon_decay: float=0.995,
-    replay_buffer: int=2000,
-    model_target_path: Path=Path('./target/model.h5'),
-    model_checkpoint_freq: int=1e3,
+    gamma: float = 0.95,
+    epsilon: float = 1.0,
+    epsilon_min: float = 0.01,
+    epsilon_decay: float = 0.995,
+    replay_buffer: int = 2000,
+    model_target_path: Path = Path('./target/model.h5'),
+    model_checkpoint_freq: int = 1e3,
 ):
     """
     Train model with DQN agent
@@ -109,7 +109,7 @@ def learn(
         mean_episode_rew = np.mean([x['rewards'] for x in infos])
 
         # Save model
-        if (timesteps-model_checkpoint) > model_checkpoint_freq:
+        if (timesteps - model_checkpoint) > model_checkpoint_freq:
             agent.save_model(model_target_path)
             model_checkpoint = model_checkpoint_freq
 

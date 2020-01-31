@@ -24,8 +24,8 @@ def learn(
     lr_actor=0.004,
     lr_critic=0.002,
     gamma: float = 0.95,
-    model_target_path: Path=Path('./target/model.h5'),
-    model_checkpoint_freq: int=50,
+    model_target_path: Path = Path('./target/model.h5'),
+    model_checkpoint_freq: int = 50,
 ):
     """
     Train agent with A2C algorithm
@@ -103,7 +103,7 @@ def learn(
         mean_episode_rew = np.mean(u_rewards)
 
         # Save model
-        if (nupdate-model_checkpoint) > model_checkpoint_freq:
+        if (nupdate - model_checkpoint) > model_checkpoint_freq:
             agent.save_model(model_target_path)
             model_checkpoint = model_checkpoint_freq
 
