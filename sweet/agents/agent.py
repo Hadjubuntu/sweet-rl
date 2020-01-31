@@ -3,7 +3,6 @@ from sweet.common.schedule import Schedule
 import numpy as np
 
 import tensorflow as tf
-from tensorflow.keras.models import Model, Sequential
 from tensorflow.keras.losses import MeanSquaredError
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.metrics import Mean
@@ -112,7 +111,6 @@ class Agent(ABC):
         """
         Determines action regarding current observation
         """
-        pass
 
     def discount_with_dones(self, rewards, dones, gamma):
         """
@@ -130,7 +128,6 @@ class Agent(ABC):
         """
         Callback function
         """
-        pass
 
     def _lr(self, t=0):
         """

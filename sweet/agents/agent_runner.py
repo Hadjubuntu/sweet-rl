@@ -1,11 +1,5 @@
 
-import gym
 import numpy as np
-from collections import deque
-from math import log, e
-import logging
-from abc import ABC, abstractmethod
-import matplotlib.pyplot as plt
 
 from sweet.agents.agent import Agent
 from sweet.agents.runner.stop_condition import StopCond, EpisodeDoneStopCond

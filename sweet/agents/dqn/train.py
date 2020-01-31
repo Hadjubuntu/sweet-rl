@@ -2,10 +2,8 @@ import gym
 import logging
 import numpy as np
 import time
-import tensorflow as tf
 from pathlib import Path
 
-from sweet.common.schedule import Schedule
 from sweet.common.logging import init_logger
 from sweet.agents.agent_runner import Runner
 from sweet.agents.runner.stop_condition import (

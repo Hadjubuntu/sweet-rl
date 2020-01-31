@@ -1,11 +1,7 @@
 
 from sweet.agents.agent import Agent
-from sweet.common.schedule import ConstantSchedule, LinearSchedule
+from sweet.common.schedule import ConstantSchedule
 
-import tensorflow as tf
-from tensorflow.keras.optimizers import Adam
-from sweet.models.default_models import dense
-from tensorflow.keras.models import Model, Sequential
 from tensorflow.keras.layers import (
     Dense, Input, LSTM, Embedding, Dropout, Activation, Flatten
 )
@@ -14,8 +10,6 @@ from tensorflow.keras.layers import (
 from collections import deque
 import numpy as np
 import random
-import logging
-import time
 
 
 class DqnAgent(Agent):

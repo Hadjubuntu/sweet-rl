@@ -1,17 +1,14 @@
-from tensorflow.keras.models import Model, Sequential
-from tensorflow.keras.optimizers import Adam, RMSprop
-from tensorflow.keras.losses import CategoricalCrossentropy
+from tensorflow.keras.models import Model
+from tensorflow.keras.optimizers import Adam
 
-from sweet.models.default_models import dense
 from sweet.agents.agent import Agent
 
 import numpy as np
 import tensorflow as tf
-import tensorflow.keras.layers as kl
 import tensorflow.keras.losses as kls
 
 
-from tensorflow.keras.models import Model, Sequential
+from tensorflow.keras.models import Model
 from tensorflow.keras.layers import (
     Dense, Input, LSTM, Embedding, Dropout, Activation, Flatten, Conv2D
 )

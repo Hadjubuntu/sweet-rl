@@ -1,11 +1,9 @@
 
 from sweet.agents.agent import Agent
-from sweet.common.schedule import ConstantSchedule, LinearSchedule
 from sweet.agents.a2c.a2c_actor import A2CActor
 from sweet.agents.a2c.a2c_critic import A2CCritic
 
 import numpy as np
-import logging
 
 
 class A2CAgent(Agent):

@@ -5,11 +5,8 @@ and masked optimization, just see this method which is written in old-fashion wa
 import gym
 import logging
 import numpy as np
-import time
-import tensorflow as tf
 
 from sweet.common.logging import init_logger
-from sweet.agents.agent_runner import Runner
 from sweet.agents.runner.stop_condition import (
     EpisodeDoneStopCond, NstepsStopCond
 )

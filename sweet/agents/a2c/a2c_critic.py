@@ -1,15 +1,13 @@
 
-from tensorflow.keras.models import Model, Sequential
+from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
-import numpy as np
 
-from sweet.models.default_models import dense
 from sweet.agents.agent import Agent
 from tensorflow.keras.losses import MeanSquaredError
 
 
-from tensorflow.keras.models import Model, Sequential
-from tensorflow.keras.layers import Dense, Input, LSTM, Embedding, Dropout, Activation, Flatten
+from tensorflow.keras.models import Model
+from tensorflow.keras.layers import Dense, Flatten, Input
 
 
 def custom_dense(
