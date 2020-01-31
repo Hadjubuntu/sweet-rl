@@ -5,7 +5,7 @@
 ## Why Sweet-RL
  
 It exists dozens of Reinforcement Learning frameworks and algorithms implementations.
-Yet, they suffer of poor modularity and ease of understanding. This is why, I started to implement my own: Sweet-RL.
+Yet, most of them suffer of poor modularity and ease of understanding. This is why, I started to implement my own: Sweet-RL.
 Trying to keep code quality, algorithms performance and diversity as high as possible.
 
 ## Getting started
@@ -33,8 +33,8 @@ python sweet/agents/dqn/dqn_runner.py # Work in progress
 
 | Algorithm     | Implementation status |               |
 | ------------- | -------------         | ------------- |
-| DQN           | Ok                    |               |
-| A2C           | Ok                    |               |
+| DQN | <g-emoji class="g-emoji" alias="heavy_check_mark" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/2714.png">✔️</g-emoji>  |               |
+| A2C           | <g-emoji class="g-emoji" alias="heavy_check_mark" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/2714.png">✔️</g-emoji>  |               |
 | PPO           | Soon                  |               |
 
 
@@ -48,7 +48,7 @@ python sweet/agents/dqn/dqn_runner.py # Work in progress
 I started this open-source RL framework in january 2020 as a consecration of my passion for Reinforcement Learning.
 Besides coding open-source project, i work for both Airbus and IRT Saint-Exupéry on Earth Observation satellites. Our team is focus on mission planning for satellites and Reinforcement Learning is an approach to solve it. Feel free to discuss with me: [Adrien HADJ-SALAH @linkedin](https://www.linkedin.com/in/adrien-hadj-salah-1b119462/)
 
-## FAQ
+## RL related topics
 
 * **What is Reinforcement Learning**
 It is supposed that you have knowledge in RL, if it is not the case, take a look to the [spinningup from OpenAI](https://spinningup.openai.com/en/latest/)
