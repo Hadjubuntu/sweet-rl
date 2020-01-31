@@ -3,6 +3,7 @@ import logging
 import numpy as np
 import time
 
+from sweet.common.logging import init_logger
 from sweet.agents.agent_runner import Runner
 from sweet.agents.runner.stop_condition import NstepsStopCond
 from sweet.common.math import explained_variance
@@ -10,6 +11,8 @@ from sweet.common.math import explained_variance
 from sweet.agents.a2c.a2c_agent import A2CAgent
 
 from collections import deque
+
+logger = logger.getLogger(__name__)
 
 
 def learn(
@@ -61,19 +64,17 @@ def learn(
         mean_episode_rew = np.mean(u_rewards)
 
         # Logging
-        logging.info(f"Update #{nupdate}")
-        logging.info(f"total_timesteps={nbatch*nupdate}")
-        logging.info(f"FPS={fps}")
-        logging.info(f"explained_varaince={expl_variance}")
-        logging.info(f"Loss_actor={loss_actor}")
-        logging.info(f"Loss_critic={loss_critic}")
-        logging.info(f"Mean rewards={mean_episode_rew}")
-        logging.info(f"Mean episode length={mean_episode_length}")
+        logger.info(f"Update #{nupdate}")
+        logger.info(f"total_timesteps={nbatch*nupdate}")
+        logger.info(f"FPS={fps}")
+        logger.info(f"explained_varaince={expl_variance}")
+        logger.info(f"Loss_actor={loss_actor}")
+        logger.info(f"Loss_critic={loss_critic}")
+        logger.info(f"Mean rewards={mean_episode_rew}")
+        logger.info(f"Mean episode length={mean_episode_length}")
 
 
 if __name__ == "__main__":
-    logging.basicConfig(
-        format='%(levelname)s:%(message)s',
-        level=logging.DEBUG)
+    init_logger()
 
     learn()

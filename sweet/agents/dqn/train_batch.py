@@ -4,12 +4,15 @@ import numpy as np
 import time
 import tensorflow as tf
 
+from sweet.common.logging import init_logger
 from sweet.agents.agent_runner import Runner
 from sweet.agents.runner.stop_condition import (
     EpisodeDoneStopCond, NstepsStopCond
 )
 from sweet.agents.dqn.dqn_agent import DqnAgent
 from sweet.common.math import explained_variance
+
+logger = logging.getLogger(__name__)
 
 
 def train_dqn_batch(env_name='CartPole-v0'):
@@ -55,16 +58,14 @@ def train_dqn_batch(env_name='CartPole-v0'):
         mean_episode_rew = np.mean([x['rewards'] for x in infos])
 
         # Logging
-        logging.info(f"Update")
-        logging.info(f"total_timesteps={timesteps}")
-        logging.info(f"FPS={fps}")
-        logging.info(f"Mean rewards={mean_episode_rew}")
-        logging.info(f"Mean episode length={mean_episode_length}")
+        logger.info(f"Update")
+        logger.info(f"total_timesteps={timesteps}")
+        logger.info(f"FPS={fps}")
+        logger.info(f"Mean rewards={mean_episode_rew}")
+        logger.info(f"Mean episode length={mean_episode_length}")
 
 
 if __name__ == "__main__":
-    logging.basicConfig(
-        format='%(levelname)s:%(message)s',
-        level=logging.DEBUG)
+    init_logger()
 
     train_dqn_batch()

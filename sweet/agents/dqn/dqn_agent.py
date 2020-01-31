@@ -87,8 +87,8 @@ class DqnAgent(Agent):
         """
         a = None
         # Reshape obs
-        obs = np.expand_dims(obs, axis=0)
-        q_values = self.tf2_fast_predict(obs)
+        obs = self.encode(obs)
+        q_values = self.fast_predict(obs)
 
         if np.random.rand() <= self.eps:
             a = np.random.randint(low=0, high=self.action_size)
@@ -141,19 +141,17 @@ class DqnAgent(Agent):
             target = reward
 
             if not done:
-                next_state = np.expand_dims(next_state, axis=0)
+                next_state = self.encode(next_state)
 
                 target = reward + self.gamma * \
-                    np.amax(self.tf2_fast_predict(next_state)[0])
+                    np.amax(self.fast_predict(next_state)[0])
 
-            state = np.expand_dims(state, axis=0)
-            target_f = self.tf2_fast_predict(state)
+            state = self.encode(state)
+            target_f = self.fast_predict(state)
             target_f[0][action] = target
 
-            # ------------------------------------------------------
             # TODO: optim: use mask to apply loss on action selected
-            # ------------------------------------------------------
-
+            
             x.append(state[0])
             y.append(target_f[0])
 
@@ -161,4 +159,4 @@ class DqnAgent(Agent):
         y = np.array(y)
 
         # Apply gradient descent
-        self.tf2_fast_apply_gradients(x, y)
+        self.fast_apply_gradients(x, y)

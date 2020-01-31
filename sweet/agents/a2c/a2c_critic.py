@@ -22,7 +22,7 @@ def custom_dense(
     x = inputs
 
     # Create one dense layer and one layer for output
-    x = Dense(128, activation='relu')(x)
+    x = Dense(64, activation='relu')(x)
     x = Flatten()(x)
     predictions = Dense(output_shape, activation=output_activation)(x)
 
@@ -72,15 +72,14 @@ class A2CCritic(Agent):
         """
         Predict state value V(s)
         """
-        obs = obs.astype(np.float32)  # FIXME : force for breakout..
-        V_s = self.tf2_fast_predict(obs)
+        V_s = self.fast_predict(obs)
         return V_s
 
     def update(self, obs, values):
         """
         Update critic network
         """
-        loss = self.tf2_fast_apply_gradients(obs, values)
+        loss = self.fast_apply_gradients(obs, values)
         return loss
 
     def act(self, obs):

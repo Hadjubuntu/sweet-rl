@@ -1,0 +1,167 @@
+2020-01-31 10:21:50,980 :: INFO :: Hello
+2020-01-31 10:21:50,980 :: WARNING :: Testing foo
+2020-01-31 10:21:51,434 :: INFO :: Update
+2020-01-31 10:21:51,434 :: INFO :: total_timesteps=25
+2020-01-31 10:21:51,434 :: INFO :: FPS=64
+2020-01-31 10:21:51,434 :: INFO :: Mean rewards=25.0
+2020-01-31 10:21:51,434 :: INFO :: Mean episode length=25.0
+2020-01-31 10:21:51,565 :: INFO :: Update
+2020-01-31 10:21:51,566 :: INFO :: total_timesteps=46
+2020-01-31 10:21:51,566 :: INFO :: FPS=88
+2020-01-31 10:21:51,566 :: INFO :: Mean rewards=21.0
+2020-01-31 10:21:51,566 :: INFO :: Mean episode length=21.0
+2020-01-31 10:21:51,840 :: INFO :: Update
+2020-01-31 10:21:51,841 :: INFO :: total_timesteps=88
+2020-01-31 10:21:51,841 :: INFO :: FPS=111
+2020-01-31 10:21:51,841 :: INFO :: Mean rewards=42.0
+2020-01-31 10:21:51,841 :: INFO :: Mean episode length=42.0
+2020-01-31 10:21:51,932 :: INFO :: Update
+2020-01-31 10:21:51,932 :: INFO :: total_timesteps=103
+2020-01-31 10:21:51,932 :: INFO :: FPS=116
+2020-01-31 10:21:51,932 :: INFO :: Mean rewards=15.0
+2020-01-31 10:21:51,932 :: INFO :: Mean episode length=15.0
+2020-01-31 10:21:52,025 :: INFO :: Update
+2020-01-31 10:21:52,025 :: INFO :: total_timesteps=117
+2020-01-31 10:21:52,025 :: INFO :: FPS=119
+2020-01-31 10:21:52,025 :: INFO :: Mean rewards=14.0
+2020-01-31 10:21:52,025 :: INFO :: Mean episode length=14.0
+2020-01-31 10:21:52,114 :: INFO :: Update
+2020-01-31 10:21:52,114 :: INFO :: total_timesteps=130
+2020-01-31 10:21:52,114 :: INFO :: FPS=122
+2020-01-31 10:21:52,114 :: INFO :: Mean rewards=13.0
+2020-01-31 10:21:52,114 :: INFO :: Mean episode length=13.0
+2020-01-31 10:21:52,187 :: INFO :: Update
+2020-01-31 10:21:52,187 :: INFO :: total_timesteps=141
+2020-01-31 10:21:52,187 :: INFO :: FPS=123
+2020-01-31 10:21:52,187 :: INFO :: Mean rewards=11.0
+2020-01-31 10:21:52,187 :: INFO :: Mean episode length=11.0
+2020-01-31 10:21:52,268 :: INFO :: Update
+2020-01-31 10:21:52,268 :: INFO :: total_timesteps=154
+2020-01-31 10:21:52,268 :: INFO :: FPS=126
+2020-01-31 10:21:52,268 :: INFO :: Mean rewards=13.0
+2020-01-31 10:21:52,269 :: INFO :: Mean episode length=13.0
+2020-01-31 10:21:52,364 :: INFO :: Update
+2020-01-31 10:21:52,364 :: INFO :: total_timesteps=168
+2020-01-31 10:21:52,364 :: INFO :: FPS=127
+2020-01-31 10:21:52,364 :: INFO :: Mean rewards=14.0
+2020-01-31 10:21:52,364 :: INFO :: Mean episode length=14.0
+2020-01-31 10:21:52,417 :: INFO :: Update
+2020-01-31 10:21:52,417 :: INFO :: total_timesteps=176
+2020-01-31 10:21:52,417 :: INFO :: FPS=128
+2020-01-31 10:21:52,417 :: INFO :: Mean rewards=8.0
+2020-01-31 10:21:52,417 :: INFO :: Mean episode length=8.0
+2020-01-31 10:21:52,596 :: INFO :: Update
+2020-01-31 10:21:52,596 :: INFO :: total_timesteps=204
+2020-01-31 10:21:52,596 :: INFO :: FPS=131
+2020-01-31 10:21:52,596 :: INFO :: Mean rewards=28.0
+2020-01-31 10:21:52,596 :: INFO :: Mean episode length=28.0
+2020-01-31 10:21:52,670 :: INFO :: Update
+2020-01-31 10:21:52,670 :: INFO :: total_timesteps=215
+2020-01-31 10:21:52,670 :: INFO :: FPS=132
+2020-01-31 10:21:52,670 :: INFO :: Mean rewards=11.0
+2020-01-31 10:21:52,670 :: INFO :: Mean episode length=11.0
+2020-01-31 10:21:52,739 :: INFO :: Update
+2020-01-31 10:21:52,739 :: INFO :: total_timesteps=226
+2020-01-31 10:21:52,739 :: INFO :: FPS=133
+2020-01-31 10:21:52,739 :: INFO :: Mean rewards=11.0
+2020-01-31 10:21:52,739 :: INFO :: Mean episode length=11.0
+2020-01-31 10:21:52,850 :: INFO :: Update
+2020-01-31 10:21:52,850 :: INFO :: total_timesteps=242
+2020-01-31 10:21:52,850 :: INFO :: FPS=134
+2020-01-31 10:21:52,850 :: INFO :: Mean rewards=16.0
+2020-01-31 10:21:52,850 :: INFO :: Mean episode length=16.0
+2020-01-31 10:21:52,947 :: INFO :: Update
+2020-01-31 10:21:52,947 :: INFO :: total_timesteps=257
+2020-01-31 10:21:52,947 :: INFO :: FPS=135
+2020-01-31 10:21:52,947 :: INFO :: Mean rewards=15.0
+2020-01-31 10:21:52,947 :: INFO :: Mean episode length=15.0
+2020-01-31 10:21:53,180 :: INFO :: Update
+2020-01-31 10:21:53,180 :: INFO :: total_timesteps=295
+2020-01-31 10:21:53,180 :: INFO :: FPS=138
+2020-01-31 10:21:53,180 :: INFO :: Mean rewards=38.0
+2020-01-31 10:21:53,180 :: INFO :: Mean episode length=38.0
+2020-01-31 10:21:53,295 :: INFO :: Update
+2020-01-31 10:21:53,295 :: INFO :: total_timesteps=313
+2020-01-31 10:21:53,295 :: INFO :: FPS=139
+2020-01-31 10:21:53,295 :: INFO :: Mean rewards=18.0
+2020-01-31 10:21:53,295 :: INFO :: Mean episode length=18.0
+2020-01-31 10:21:53,386 :: INFO :: Update
+2020-01-31 10:21:53,386 :: INFO :: total_timesteps=326
+2020-01-31 10:21:53,386 :: INFO :: FPS=139
+2020-01-31 10:21:53,386 :: INFO :: Mean rewards=13.0
+2020-01-31 10:21:53,386 :: INFO :: Mean episode length=13.0
+2020-01-31 10:21:53,537 :: INFO :: Update
+2020-01-31 10:21:53,537 :: INFO :: total_timesteps=350
+2020-01-31 10:21:53,537 :: INFO :: FPS=140
+2020-01-31 10:21:53,537 :: INFO :: Mean rewards=24.0
+2020-01-31 10:21:53,537 :: INFO :: Mean episode length=24.0
+2020-01-31 10:21:53,767 :: INFO :: Update
+2020-01-31 10:21:53,767 :: INFO :: total_timesteps=385
+2020-01-31 10:21:53,767 :: INFO :: FPS=141
+2020-01-31 10:21:53,767 :: INFO :: Mean rewards=35.0
+2020-01-31 10:21:53,767 :: INFO :: Mean episode length=35.0
+2020-01-31 10:21:53,917 :: INFO :: Update
+2020-01-31 10:21:53,917 :: INFO :: total_timesteps=408
+2020-01-31 10:21:53,917 :: INFO :: FPS=142
+2020-01-31 10:21:53,917 :: INFO :: Mean rewards=23.0
+2020-01-31 10:21:53,917 :: INFO :: Mean episode length=23.0
+2020-01-31 10:21:54,422 :: INFO :: Update
+2020-01-31 10:21:54,422 :: INFO :: total_timesteps=490
+2020-01-31 10:21:54,422 :: INFO :: FPS=145
+2020-01-31 10:21:54,422 :: INFO :: Mean rewards=82.0
+2020-01-31 10:21:54,422 :: INFO :: Mean episode length=82.0
+2020-01-31 10:21:54,533 :: INFO :: Update
+2020-01-31 10:21:54,533 :: INFO :: total_timesteps=508
+2020-01-31 10:21:54,533 :: INFO :: FPS=145
+2020-01-31 10:21:54,533 :: INFO :: Mean rewards=18.0
+2020-01-31 10:21:54,533 :: INFO :: Mean episode length=18.0
+2020-01-31 10:21:54,650 :: INFO :: Update
+2020-01-31 10:21:54,650 :: INFO :: total_timesteps=527
+2020-01-31 10:21:54,650 :: INFO :: FPS=146
+2020-01-31 10:21:54,650 :: INFO :: Mean rewards=19.0
+2020-01-31 10:21:54,650 :: INFO :: Mean episode length=19.0
+2020-01-31 10:21:54,713 :: INFO :: Update
+2020-01-31 10:21:54,713 :: INFO :: total_timesteps=537
+2020-01-31 10:21:54,713 :: INFO :: FPS=146
+2020-01-31 10:21:54,713 :: INFO :: Mean rewards=10.0
+2020-01-31 10:21:54,713 :: INFO :: Mean episode length=10.0
+2020-01-31 10:21:55,018 :: INFO :: Update
+2020-01-31 10:21:55,018 :: INFO :: total_timesteps=587
+2020-01-31 10:21:55,019 :: INFO :: FPS=147
+2020-01-31 10:21:55,019 :: INFO :: Mean rewards=50.0
+2020-01-31 10:21:55,019 :: INFO :: Mean episode length=50.0
+2020-01-31 10:21:56,156 :: INFO :: Update
+2020-01-31 10:21:56,156 :: INFO :: total_timesteps=776
+2020-01-31 10:21:56,157 :: INFO :: FPS=151
+2020-01-31 10:21:56,157 :: INFO :: Mean rewards=189.0
+2020-01-31 10:21:56,157 :: INFO :: Mean episode length=189.0
+2020-01-31 10:21:57,319 :: INFO :: Update
+2020-01-31 10:21:57,319 :: INFO :: total_timesteps=969
+2020-01-31 10:21:57,319 :: INFO :: FPS=154
+2020-01-31 10:21:57,319 :: INFO :: Mean rewards=193.0
+2020-01-31 10:21:57,320 :: INFO :: Mean episode length=193.0
+2020-01-31 10:21:57,959 :: INFO :: Update
+2020-01-31 10:21:57,959 :: INFO :: total_timesteps=1072
+2020-01-31 10:21:57,959 :: INFO :: FPS=155
+2020-01-31 10:21:57,959 :: INFO :: Mean rewards=103.0
+2020-01-31 10:21:57,959 :: INFO :: Mean episode length=103.0
+2020-01-31 10:21:58,360 :: INFO :: Update
+2020-01-31 10:21:58,360 :: INFO :: total_timesteps=1138
+2020-01-31 10:21:58,360 :: INFO :: FPS=155
+2020-01-31 10:21:58,360 :: INFO :: Mean rewards=66.0
+2020-01-31 10:21:58,360 :: INFO :: Mean episode length=66.0
+2020-01-31 10:21:59,117 :: INFO :: Update
+2020-01-31 10:21:59,117 :: INFO :: total_timesteps=1266
+2020-01-31 10:21:59,117 :: INFO :: FPS=156
+2020-01-31 10:21:59,117 :: INFO :: Mean rewards=128.0
+2020-01-31 10:21:59,117 :: INFO :: Mean episode length=128.0
+2020-01-31 10:22:00,330 :: INFO :: Update
+2020-01-31 10:22:00,330 :: INFO :: total_timesteps=1466
+2020-01-31 10:22:00,331 :: INFO :: FPS=157
+2020-01-31 10:22:00,331 :: INFO :: Mean rewards=200.0
+2020-01-31 10:22:00,331 :: INFO :: Mean episode length=200.0
+2020-01-31 10:22:01,334 :: INFO :: Update
+2020-01-31 10:22:01,334 :: INFO :: total_timesteps=1628
+2020-01-31 10:22:01,335 :: INFO :: FPS=158
+2020-01-31 10:22:01,335 :: INFO :: Mean rewards=162.0
+2020-01-31 10:22:01,335 :: INFO :: Mean episode length=162.0

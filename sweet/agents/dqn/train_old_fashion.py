@@ -8,11 +8,14 @@ import numpy as np
 import time
 import tensorflow as tf
 
+from sweet.common.logging import init_logger
 from sweet.agents.agent_runner import Runner
 from sweet.agents.runner.stop_condition import (
     EpisodeDoneStopCond, NstepsStopCond
 )
 from sweet.agents.dqn.dqn_agent import DqnAgent
+
+logger = logging.getLogger(__name__)
 
 
 def learn_oldfashion(
@@ -62,7 +65,7 @@ def learn_oldfashion(
 
             if done:
                 sum_rewards.append(np.sum(rewards))
-                logging.info(
+                logger.info(
                     "Episode {} done in {} steps / eps={}".format(
                         nepisode, steps, agent.eps)
                 )
@@ -76,9 +79,7 @@ def learn_oldfashion(
 
 
 if __name__ == "__main__":
-    logging.basicConfig(
-        format='%(levelname)s:%(message)s',
-        level=logging.DEBUG)
+    init_logger()
 
     env = gym.make('CartPole-v0')
     agent = DqnAgent(

@@ -49,14 +49,37 @@ class Agent(ABC):
         """
         return tf.squeeze(tf.random.categorical(logits, 1), axis=-1)
 
-    def tf2_fast_predict(self, x):
-        # [TF 2.0 error: we can't use numpy func in graph mode
-        # (eg. with tf.function)] @tf.function
-        res = self.model(x)
-        return res.numpy()
+    def encode(self, var):
+        """
+        From raw observation to encoded obs for neural network application
+        """
+        var = np.expand_dims(var, axis=0)
+        return var.astype(np.float32)
 
     @tf.function
-    def tf2_fast_apply_gradients(self, x, y):
+    def _graph_predict(self, x):
+        return self.model(x)
+
+    def fast_predict(self, x):
+        """
+        Model prediction against observation x
+        """
+        # [TF 2.0 error: we can't use numpy func in graph mode
+        # (eg. with tf.function)] @tf.function, this is why we call a 
+        # sub-function
+        res = self._graph_predict(x)
+
+        # Convert from tensor to numpy array
+        if isinstance(res, list):
+            for idx, element in enumerate(res):
+                res[idx] = element.numpy()
+        else:
+            res = res.numpy()
+
+        return res
+
+    @tf.function
+    def fast_apply_gradients(self, x, y):
         """
         This is a TensorFlow function, run once for each epoch for the
         whole input. We move forward first, then calculate gradients

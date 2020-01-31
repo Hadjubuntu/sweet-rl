@@ -68,7 +68,7 @@ class A2CAgent(Agent):
                 Estimated value from critic
         """
         # Reshape obs expecting (nb_batch, obs_shape..) and got (obs_shape)
-        obs = np.expand_dims(obs, axis=0)
+        obs = self.encode(obs)
 
         action = self.actor.act(obs)
         value = self.critic.predict(obs)

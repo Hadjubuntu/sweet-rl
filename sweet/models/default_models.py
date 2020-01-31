@@ -4,7 +4,14 @@ from tensorflow.keras.layers import Dense, Input, LSTM, Embedding, Dropout, Acti
 
 import logging
 
-def str_to_model(model_str: str):
+
+def str_to_model(model_str: str, n_layers=1):
+    """
+    Build model from string:
+
+    'dense': Dense neural network
+    'conv': Convolutionnal neural network
+    """
     if model_str == 'dense':
         return None
     else:
@@ -31,8 +38,8 @@ def dense(input_shape, output_shape, output_activation='linear', name=None):
     x = inputs
 
     # Create one dense layer and one layer for output
-    x = Dense(32, activation='tanh')(x)
-    x = Dense(32, activation='tanh')(x)
+    x = Dense(128, activation='tanh')(x)
+    x = Dense(128, activation='tanh')(x)
     predictions = Dense(output_shape, activation='linear')(x)
 
     # Finally build model

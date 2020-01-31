@@ -14,7 +14,7 @@ import tensorflow.keras.losses as kls
 
 
 from tensorflow.keras.models import Model, Sequential
-from tensorflow.keras.layers import Dense, Input, LSTM, Embedding, Dropout, Activation, Flatten
+from tensorflow.keras.layers import Dense, Input, LSTM, Embedding, Dropout, Activation, Flatten, Conv2D
 
 
 def pi_model(input_shape, output_shape):
@@ -24,7 +24,7 @@ def pi_model(input_shape, output_shape):
     x = inputs
 
     # Create one dense layer and one layer for output
-    x = Dense(128, activation='relu')(x)
+    x = Dense(8, activation='relu')(x)
     x = Flatten()(x)
     logits = Dense(output_shape)(x)
 
@@ -108,10 +108,9 @@ class A2CActor(Agent):
         Compute current policy action
         """
         # As we need advs to pass in model, create a zero vector
-        obs = obs.astype(np.float32)  # FIXME : force for breakout..
         zero_advs = np.zeros((obs.shape[0], 1))
 
-        action_logits, advs = self.model([obs, zero_advs])
+        action_logits, advs = self.fast_predict([obs, zero_advs])
 
         action_sample_np = self.sample(action_logits).numpy()
         action = action_sample_np[0]
@@ -122,12 +121,11 @@ class A2CActor(Agent):
         """
         Update actor network
         """
-        obs = obs.astype(np.float32)  # FIXME : force for breakout..
-        loss_pi = self.tf2_fast_apply_gradients(obs, actions, advs)
+        loss_pi = self._apply_gradients(obs, actions, advs)
         return loss_pi
 
-    # Can't eager to ops: @tf.function
-    def tf2_fast_apply_gradients(self, x, y, advs):
+    @tf.function
+    def _apply_gradients(self, x, y, advs):
         """
         CUSTOM for actor
         """
