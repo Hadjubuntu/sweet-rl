@@ -2,6 +2,7 @@ import gym
 import logging
 import numpy as np
 import time
+from pathlib import Path
 
 from sweet.common.logging import init_logger
 from sweet.agents.agent_runner import Runner
@@ -16,23 +17,61 @@ logger = logging.getLogger(__name__)
 
 
 def learn(
-    env_name='Breakout-v0',
+    env_name='CartPole-v0',
     total_timesteps=1e5,
     nenvs=1,
-    nsteps=32
+    nsteps=32,
+    lr_actor=0.004,
+    lr_critic=0.002,
+    gamma: float = 0.95,
+    model_target_path: Path=Path('./target/model.h5'),
+    model_checkpoint_freq: int=50,
 ):
+    """
+    Train agent with A2C algorithm
+
+    Parameters
+    ----------
+        env_name: str
+            Name of OpenAI Gym environment
+        total_timesteps: int
+            Number of training steps
+        nenvs: int
+            Number of parallel environment to collect experience
+        nsteps: int
+            Number of steps executed by each environment to collect experience.
+            So batch size is nenvs * nsteps for each update
+        lr_actor: float or sweet.common.schedule.Schedule
+            Learning rate for actor
+        lr_actor: float or sweet.common.schedule.Schedule
+            Learning rate for critic
+        gamma: float
+            Discount factor
+        model_target_path: Path
+            Path to the model in order to save while learning
+            (.h5 extension needed)
+        model_checkpoint_freq: int
+            Save model each "model_checkpoint_freq" update
+            (so each nenvs*nsteps)
+    """
     # Load OpenAI Gym env
     env = gym.make(env_name)
 
     # Load DQN agent
     agent = A2CAgent(
         state_shape=env.observation_space.shape,
-        action_size=env.action_space.n)
+        action_size=env.action_space.n,
+        model='dense',
+        lr_actor=0.004,
+        lr_critic=0.002,
+        gamma=0.95
+    )
 
     nenvs = 1
     nsteps = 32
     nbatch = nenvs * nsteps
     nudpates = int(total_timesteps // nbatch + 1)
+    model_checkpoint = 0
 
     runner = Runner(env, agent, stop_cond=NstepsStopCond(nsteps))
     tstart = time.time()
@@ -62,6 +101,11 @@ def learn(
 
         mean_episode_length = np.mean(u_steps)
         mean_episode_rew = np.mean(u_rewards)
+
+        # Save model
+        if (nupdate-model_checkpoint) > model_checkpoint_freq:
+            agent.save_model(model_target_path)
+            model_checkpoint = model_checkpoint_freq
 
         # Logging
         logger.info(f"Update #{nupdate}")

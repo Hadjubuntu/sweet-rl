@@ -56,6 +56,17 @@ class Agent(ABC):
         var = np.expand_dims(var, axis=0)
         return var.astype(np.float32)
 
+    def save_model(self, target_path):
+        """
+        Save model to HDF5 file (.h5 extension needed)
+        """
+        target_path = str(target_path)
+
+        if not target_path.endswith('.h5'):
+            target_path = f"{target_path}.h5"
+
+        self.model.save(target_path)
+
     @tf.function
     def _graph_predict(self, x):
         return self.model(x)

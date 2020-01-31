@@ -4,7 +4,7 @@ from pathlib import Path
 from logging.handlers import RotatingFileHandler
 
 
-def init_logger(target_dir=Path('./target/')):
+def init_logger(log_in_file=True, target_dir=Path('./target/')):
     """
     Initialize logging activity
     """
@@ -14,19 +14,20 @@ def init_logger(target_dir=Path('./target/')):
     logger = logging.getLogger()
     logger.setLevel(logging.DEBUG)
 
-    formatter = logging.Formatter(
-        '%(asctime)s :: %(levelname)s :: %(message)s'
-    )
-    file_handler = RotatingFileHandler(
-        target_dir / 'activity.log',
-        'a',
-        10000000,
-        1
-    )
+    if log_in_file:
+        formatter = logging.Formatter(
+            '%(asctime)s :: %(levelname)s :: %(message)s'
+        )
+        file_handler = RotatingFileHandler(
+            target_dir / 'activity.log',
+            'a',
+            10000000,
+            1
+        )
 
-    file_handler.setLevel(logging.DEBUG)
-    file_handler.setFormatter(formatter)
-    logger.addHandler(file_handler)
+        file_handler.setLevel(logging.DEBUG)
+        file_handler.setFormatter(formatter)
+        logger.addHandler(file_handler)
 
     stream_handler = logging.StreamHandler()
     stream_handler.setLevel(logging.INFO)

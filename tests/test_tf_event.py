@@ -1,7 +1,7 @@
 from sweet.agents.agent_logger import AgentLog
 
 
-log = AgentLog(path='./mylogs/')
+log = AgentLog(path='./target/mylogs/')
 for i in range(100):
     log.append(metric='test', value=i / 100.0, step=i)
 
