@@ -110,8 +110,10 @@ class A2CActor(Agent):
         # As we need advs to pass in model, create a zero vector
         zero_advs = np.zeros((obs.shape[0], 1))
 
+        # Models returns logits and given advantages
         action_logits, advs = self.fast_predict([obs, zero_advs])
 
+        # So we can sample an action from that probability distribution
         action_sample_np = self.sample(action_logits).numpy()
         action = action_sample_np[0]
 

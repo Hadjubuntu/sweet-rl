@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+
 class Schedule(ABC):
     @abstractmethod
     def value(self, t):
@@ -16,6 +17,7 @@ class Schedule(ABC):
         """
         raise NotImplementedError()
 
+
 class ConstantSchedule(Schedule):
     def __init__(self, const):
         """
@@ -27,11 +29,11 @@ class ConstantSchedule(Schedule):
                 Constant value
         """
         self.const = const
-    
+
     def value(self, t):
         return self.const
 
-        
+
 class LinearSchedule(Schedule):
     def __init__(self, schedule_timesteps, initial_value, final_value):
         """
@@ -42,6 +44,7 @@ class LinearSchedule(Schedule):
         self.final_value = final_value
 
     def value(self, t):
-        fraction = min((self.schedule_timesteps-t) / self.schedule_timesteps, 1.0)
-        return self.final_value + fraction * (self.initial_value - self.final_value)
-
+        fraction = min((self.schedule_timesteps - t) /
+                       self.schedule_timesteps, 1.0)
+        return self.final_value + fraction * \
+            (self.initial_value - self.final_value)

@@ -1,4 +1,4 @@
- 
+
 import gym
 import numpy as np
 from collections import deque
@@ -9,13 +9,14 @@ import matplotlib.pyplot as plt
 
 from sweet.agents.agent import Agent
 from sweet.agents.runner.stop_condition import StopCond, EpisodeDoneStopCond
-              
+
+
 class Runner():
-    def __init__(self, 
-                env, 
-                agent: Agent, 
-                stop_cond: StopCond = EpisodeDoneStopCond(),
-                step_callback = None):
+    def __init__(self,
+                 env,
+                 agent: Agent,
+                 stop_cond: StopCond = EpisodeDoneStopCond(),
+                 step_callback=None):
         """
         Runner aims to collect batch of experience
 
@@ -35,7 +36,7 @@ class Runner():
         self.agent = agent
         self.stop_cond = stop_cond
         self.obs = self.env.reset()
-        self.episode_steps = 0  # TODO Better in vec_env
+        self.episode_steps = 0  #  TODO Better in vec_env
         self.episode_rews = 0.0
         self.step_callback = step_callback
 
@@ -52,7 +53,8 @@ class Runner():
 
         # We collect until the stop condition is encountered
         while self.stop_cond.iterate(done=done):
-            # Compute agent action and value (or Q-value depending on agent) estimation
+            # Compute agent action and value (or Q-value depending on agent)
+            # estimation
             action, value = self.agent.act(self.obs)
 
             # Take actions in env and collect experience outputs
@@ -64,8 +66,10 @@ class Runner():
 
             # Callback (if specified)
             if self.step_callback:
-                self.step_callback((obs_copy, next_obs, rew, done, action, value))
-            
+                self.step_callback(
+                    (obs_copy, next_obs, rew, done, action, value)
+                )
+
             # Store all needed data
             mb_obs.append(obs_copy)
             mb_next_obs.append(next_obs)
@@ -77,14 +81,13 @@ class Runner():
             self.obs = next_obs
 
             if done:
-                infos['steps']=self.episode_steps
-                infos['rewards']=self.episode_rews
+                infos['steps'] = self.episode_steps
+                infos['rewards'] = self.episode_rews
                 mb_infos.append(infos)
 
                 self.obs = self.env.reset()
                 self.episode_steps = 0
                 self.episode_rews = 0.0
-            
 
         # Transform list into numpy array
         mb_obs = np.asarray(mb_obs, dtype=np.float32)

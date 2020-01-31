@@ -1,9 +1,11 @@
 import tensorflow as tf
 
+
 class AgentLog():
     """
     Agent logger
     """
+
     def __init__(self, path):
         """
         """
@@ -16,8 +18,3 @@ class AgentLog():
         with writer.as_default():
             tf.summary.scalar(metric, value, step=step)
             writer.flush()
-
-
-    
-
-

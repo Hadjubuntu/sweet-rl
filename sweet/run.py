@@ -25,13 +25,19 @@ Usage:
 def main(args):
     """
     Create RL agent and launch training phase
-    """    
+    """
     # Initialize logger
-    logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
+    logging.basicConfig(
+        format='%(levelname)s:%(message)s',
+        level=logging.DEBUG)
 
     # Parse arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument("-e", type=str, help="Environment to play with", default="CartPole-v0")
+    parser.add_argument(
+        "-e",
+        type=str,
+        help="Environment to play with",
+        default="CartPole-v0")
     args = parser.parse_args()
 
     env = args.e
@@ -40,10 +46,13 @@ def main(args):
     env = gym.make(env)
 
     # Load DQN agent
-    agent = DqnAgent(state_shape=env.observation_space.shape, action_size=env.action_space.n)
+    agent = DqnAgent(
+        state_shape=env.observation_space.shape,
+        action_size=env.action_space.n)
 
     # Learn few steps
     learn(env, agent, timesteps=1e2)
+
 
 if __name__ == '__main__':
     main(sys.argv)

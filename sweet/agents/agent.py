@@ -65,7 +65,7 @@ class Agent(ABC):
         Model prediction against observation x
         """
         # [TF 2.0 error: we can't use numpy func in graph mode
-        # (eg. with tf.function)] @tf.function, this is why we call a 
+        # (eg. with tf.function)] @tf.function, this is why we call a
         # sub-function
         res = self._graph_predict(x)
 

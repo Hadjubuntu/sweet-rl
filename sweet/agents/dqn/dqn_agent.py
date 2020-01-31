@@ -151,7 +151,7 @@ class DqnAgent(Agent):
             target_f[0][action] = target
 
             # TODO: optim: use mask to apply loss on action selected
-            
+
             x.append(state[0])
             y.append(target_f[0])
 
