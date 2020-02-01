@@ -14,7 +14,7 @@ class TFPlatform(MLPlatform):
         Initialize tensorflow platform
         """
         super().__init__('tensorflow')
-        self.loss = self._build_loss(loss)
+        self.loss = self._build_loss(loss, action_size)
         self.optimizer = self._build_optimizer(optimizer, lr)
         self.model = self._build_model(model, state_shape, action_size)
         self.eval_loss = Mean('loss')
@@ -65,13 +65,13 @@ class TFPlatform(MLPlatform):
 
         return self.eval_loss(loss)
 
-    def _build_loss(self, loss: str):
+    def _build_loss(self, loss: str, action_size: int):
         loss_out = None
 
         if loss == 'mean_squared_error' or loss == 'mse':
             loss_out = kl.MeanSquaredError()
         elif loss == 'actor_categorical_crossentropy':
-            loss_out = loss_actor_critic()
+            loss_out = loss_actor_critic(action_size)
         else:
             raise NotImplementedError(f'Unknow loss in TF-platform: {loss}')
 

@@ -39,7 +39,6 @@ class TorchPiActor(nn.Module):
 
         x = torch.relu(self.h1(x1))
         x = self.out(x)
-        #res = torch.cat((x, x2), 1)
 
         return [x, x2]
 
