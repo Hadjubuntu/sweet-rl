@@ -3,6 +3,7 @@ import numpy as np
 from sweet.agents.agent import Agent
 from sweet.agents.a2c.a2c_actor import A2CActor
 from sweet.agents.a2c.a2c_critic import A2CCritic
+from sweet.interface.ml_platform import MLPlatform
 
 
 class A2CAgent(Agent):
@@ -13,6 +14,10 @@ class A2CAgent(Agent):
 
     Parameters
     ----------
+        ml_platform: MLPlatform
+            Instance of Machine Learning platform to use.
+            TF2 = sweet.interface.tf_platform.TFPlaform
+            Torch = sweet.interface.tf_platform.TorchPlatform
         state_shape: shape
             Observation state shape
         action_size: int
@@ -28,6 +33,7 @@ class A2CAgent(Agent):
     """
 
     def __init__(self,
+                 ml_platform: MLPlatform,
                  state_shape,
                  action_size,
                  model='dense',
@@ -35,7 +41,9 @@ class A2CAgent(Agent):
                  lr_critic=0.002,
                  gamma: float = 0.95):
         # Generic initialization
-        super().__init__(lr_actor, model, state_shape, action_size)
+        super().__init__(
+            ml_platform, lr_actor, model, state_shape, action_size
+        )
 
         # TODO pass model actor/critic
         self.actor = A2CActor(lr_actor, state_shape, action_size)

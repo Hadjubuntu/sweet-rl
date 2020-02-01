@@ -1,4 +1,3 @@
-
 import numpy as np
 
 from sweet.agents.agent import Agent
@@ -13,7 +12,6 @@ class Runner():
                  step_callback=None):
         """
         Runner aims to collect batch of experience
-
 
         Parameters
         ----------

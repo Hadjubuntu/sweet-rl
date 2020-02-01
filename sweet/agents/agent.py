@@ -94,7 +94,6 @@ class Agent(ABC):
             discounted.append(r)
         return np.array(discounted[::-1])
 
-    @abstractmethod
     def step_callback(self, data):
         """
         Callback function
