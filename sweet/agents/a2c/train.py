@@ -5,7 +5,7 @@ import time
 from pathlib import Path
 from collections import deque
 
-from sweet.interface.tf_platform import TFPlatform
+from sweet.interface.tf.tf_platform import TFPlatform
 from sweet.common.logging import init_logger
 from sweet.agents.agent_runner import Runner
 from sweet.agents.runner.stop_condition import NstepsStopCond

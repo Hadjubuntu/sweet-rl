@@ -4,7 +4,7 @@ import tensorflow as tf
 import tensorflow.keras.losses as kl
 import tensorflow.keras.optimizers as ko
 from tensorflow.keras.metrics import Mean
-from sweet.models.default_models import dense
+from sweet.interface.tf.default_models import dense
 
 
 class TFPlatform(MLPlatform):
@@ -15,7 +15,6 @@ class TFPlatform(MLPlatform):
         super().__init__('tensorflow')
         self.loss = self._build_loss(loss)
         self.optimizer = self._build_optimizer(optimizer, lr)
-
         self.model = self._build_model(model, state_shape, action_size)
         self.eval_loss = Mean('loss')
 
@@ -68,7 +67,7 @@ class TFPlatform(MLPlatform):
     def _build_loss(self, loss: str):
         loss_out = None
 
-        if loss == 'mean_squared_error':
+        if loss == 'mean_squared_error' or loss == 'mse':
             loss_out = kl.MeanSquaredError()
         else:
             raise NotImplementedError(f'Unknow loss in TF-platform: {loss}')
@@ -98,4 +97,7 @@ class TFPlatform(MLPlatform):
         return model
 
     def save(self, target_path):
+        if not target_path.endswith('.h5'):
+            target_path = f"{target_path}.h5"
+
         self.model.save(target_path)

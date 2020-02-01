@@ -16,8 +16,8 @@ class A2CAgent(Agent):
     ----------
         ml_platform: MLPlatform
             Instance of Machine Learning platform to use.
-            TF2 = sweet.interface.tf_platform.TFPlaform
-            Torch = sweet.interface.tf_platform.TorchPlatform
+            TF2 = sweet.interface.tf.tf_platform.TFPlaform
+            Torch = sweet.interface.tf.tf_platform.TorchPlatform
         state_shape: shape
             Observation state shape
         action_size: int

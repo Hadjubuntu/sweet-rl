@@ -54,13 +54,9 @@ class Agent(ABC):
 
     def save_model(self, target_path):
         """
-        Save model to HDF5 file (.h5 extension needed)
+        Save model to file (HDF5 for tensorflow, Pth for Torch)
         """
         target_path = str(target_path)
-
-        if not target_path.endswith('.h5'):
-            target_path = f"{target_path}.h5"
-
         self.ml_platform.save(target_path)
 
     def fast_predict(self, x):

@@ -1,8 +1,8 @@
 
 from tensorflow.keras.models import Model, Sequential
-from tensorflow.keras.layers import Dense, Input, LSTM, Embedding, Dropout, Activation, Flatten
-
-import logging
+from tensorflow.keras.layers import (
+    Dense, Input, LSTM, Embedding, Dropout, Activation, Flatten
+)
 
 
 def str_to_model(model_str: str, n_layers=1):
@@ -15,7 +15,7 @@ def str_to_model(model_str: str, n_layers=1):
     if model_str == 'dense':
         return None
     else:
-        logging.error(f"Unknow model: {model_str}")
+        raise NotImplementedError(f"Unknow model: {model_str}")
 
 
 def dense(input_shape, output_shape, output_activation='linear', name=None):
