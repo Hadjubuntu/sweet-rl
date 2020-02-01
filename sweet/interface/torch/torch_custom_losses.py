@@ -2,6 +2,7 @@ import numpy as np
 
 import torch
 import torch.nn as nn
+from torch.distributions import Categorical
 
 
 # Memo:
@@ -35,11 +36,10 @@ def loss_actor_critic(_entropy_coeff=0.0001):
         )
         policy_loss = (advs * neglogp).mean()
 
-        # entropy_loss = cross_entrop(
-        #     y_pred, y_pred
-        # )
+        cat = Categorical(y_pred)
+        entropy_loss = cat.entropy().mean()
 
-        return policy_loss  # TODO FIXME entropy_losss - entropy_coeff * entropy_loss
+        return policy_loss - entropy_coeff * entropy_loss
 
     # Return a function
     return pi_loss
