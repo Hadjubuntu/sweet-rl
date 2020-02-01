@@ -7,7 +7,8 @@ setup(
     author='Adrien Hadj-Salah',
     author_email='adrien.hadj.salah@gmail.com',
     description='The sweetest Reinforcement Learning framework',
-    packages=find_packages(),  
+    license='MIT',
+    packages=find_packages(),
     python_requires='>=3.6',
     install_requires=[
         'numpy==1.18.1',

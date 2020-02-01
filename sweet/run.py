@@ -3,7 +3,6 @@ import re
 import multiprocessing
 import os.path as osp
 import gym
-import tensorflow as tf
 import numpy as np
 
 from sweet.agents.dqn.dqn_agent import DqnAgent

@@ -4,6 +4,7 @@ import numpy as np
 import time
 from pathlib import Path
 
+from sweet.interface.tf_platform import TFPlatform
 from sweet.common.logging import init_logger
 from sweet.agents.agent_runner import Runner
 from sweet.agents.dqn.dqn_agent import DqnAgent
@@ -12,10 +13,11 @@ from sweet.agents.runner.stop_condition import (
     NstepsStopCond
 )
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("dqn-train")
 
 
 def learn(
+    ml_platform=TFPlatform,
     env_name='CartPole-v0',
     total_timesteps=1e5,
     lr=0.01,
@@ -32,6 +34,8 @@ def learn(
 
     Parameters
     ----------
+        ml_platform: sweet.interface.MLPlatform
+            Machine Learning platform (either TF2 or Torch)
         env_name: str
             Name of OpenAI Gym environment
         total_timesteps: int
@@ -60,6 +64,7 @@ def learn(
 
     # Load DQN agent
     agent = DqnAgent(
+        ml_platform=ml_platform,
         state_shape=env.observation_space.shape,
         action_size=env.action_space.n,
         model='dense',

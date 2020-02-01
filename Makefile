@@ -24,3 +24,8 @@ clean-test:
 	rm -f .coverage
 	rm -fr htmlcov/
 	rm -fr target/
+
+dist:
+	# Distribute package to pypi.org/project/sweet-rl/
+	python setup.py sdist
+	twine upload dist/*

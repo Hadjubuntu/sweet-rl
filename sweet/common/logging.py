@@ -37,6 +37,3 @@ def init_logger(log_in_file=True, target_dir=Path('./target/')):
     )
     stream_handler.setFormatter(formatter_stream)
     logger.addHandler(stream_handler)
-
-    logger.info('Hello')
-    logger.warning('Testing %s', 'foo')

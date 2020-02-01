@@ -1,27 +1,23 @@
 from abc import ABC, abstractmethod
-from sweet.common.schedule import Schedule
 import numpy as np
 
-import tensorflow as tf
-from tensorflow.keras.losses import MeanSquaredError
-from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.metrics import Mean
-from sweet.models.default_models import dense
+from sweet.common.schedule import Schedule
+from sweet.interface.ml_platform import MLPlatform
 
 
 class Agent(ABC):
     """
     Generic class for RL algorithm
     """
-
     def __init__(
             self,
+            ml_platform: MLPlatform,
             lr,
             model,
             state_shape,
             action_size,
-            optimizer=Adam,
-            loss=MeanSquaredError):
+            optimizer: str = 'adam',
+            loss: str = 'mean_squared_error'):
         """
         Generic initialization of RL algorithm
         """
@@ -32,21 +28,22 @@ class Agent(ABC):
         # Set common hyperparameters
         self.lr = lr
 
-        # Initialize model/optimizer and loss
-        self.optimizer = optimizer(lr=self._lr())
-        self.eval_loss = Mean('loss')
-
-        self.loss, self.model = None, None
-        if loss:
-            self.loss = loss()
-        if model:
-            self.model = self._build_model(model, state_shape, action_size)
+        # Initialize model/optimizer and loss wrt to Machine Learning platform
+        # (so far, IF to TF2 or Torch are implemented)
+        self.ml_platform = ml_platform(
+            model,
+            loss,
+            optimizer,
+            self.lr,
+            state_shape,
+            action_size
+        )
 
     def sample(self, logits):
         """
         Sample distribution
         """
-        return tf.squeeze(tf.random.categorical(logits, 1), axis=-1)
+        return self.ml_platform.sample(logits)
 
     def encode(self, var):
         """
@@ -64,53 +61,26 @@ class Agent(ABC):
         if not target_path.endswith('.h5'):
             target_path = f"{target_path}.h5"
 
-        self.model.save(target_path)
-
-    @tf.function
-    def _graph_predict(self, x):
-        return self.model(x)
+        self.ml_platform.save(target_path)
 
     def fast_predict(self, x):
         """
         Model prediction against observation x
         """
-        # [TF 2.0 error: we can't use numpy func in graph mode
-        # (eg. with tf.function)] @tf.function, this is why we call a
-        # sub-function
-        res = self._graph_predict(x)
+        return self.ml_platform.fast_predict(x)
 
-        # Convert from tensor to numpy array
-        if isinstance(res, list):
-            for idx, element in enumerate(res):
-                res[idx] = element.numpy()
-        else:
-            res = res.numpy()
-
-        return res
-
-    @tf.function
     def fast_apply_gradients(self, x, y):
         """
-        This is a TensorFlow function, run once for each epoch for the
-        whole input. We move forward first, then calculate gradients
-        with Gradient Tape to move backwards.
+        Update model wrt (x, y) data batch
         """
-        with tf.GradientTape() as tape:
-            predictions = self.model(x)
-            loss = self.loss(y, predictions)
-
-        trainable_vars = self.model.trainable_weights
-
-        gradients = tape.gradient(loss, trainable_vars)
-        self.optimizer.apply_gradients(zip(gradients, trainable_vars))
-
-        return self.eval_loss(loss)
+        self.ml_platform.fast_apply_gradients(x, y)
 
     @abstractmethod
     def act(self, obs):
         """
         Determines action regarding current observation
         """
+        pass
 
     def discount_with_dones(self, rewards, dones, gamma):
         """
@@ -124,10 +94,12 @@ class Agent(ABC):
             discounted.append(r)
         return np.array(discounted[::-1])
 
+    @abstractmethod
     def step_callback(self, data):
         """
         Callback function
         """
+        pass
 
     def _lr(self, t=0):
         """
@@ -139,14 +111,3 @@ class Agent(ABC):
             return self.lr.value(t)
         else:
             raise NotImplementedError()
-
-    def _build_model(self, model='dense', state_shape=None, action_shape=None):
-        """
-        Build model from TF-Keras model or string
-        """
-        if isinstance(model, str):
-            model = dense(input_shape=state_shape, output_shape=action_shape)
-
-        model.compile(loss=self.loss, optimizer=self.optimizer)
-
-        return model
