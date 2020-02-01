@@ -5,17 +5,6 @@ from tensorflow.keras.layers import (
 )
 
 
-def str_to_model(model_str: str, n_layers=1):
-    """
-    Build model from string:
-
-    'dense': Dense neural network
-    'conv': Convolutionnal neural network
-    """
-    if model_str == 'dense':
-        return None
-    else:
-        raise NotImplementedError(f"Unknow model: {model_str}")
 
 
 def dense(input_shape, output_shape, output_activation='linear', name=None):
@@ -47,3 +36,36 @@ def dense(input_shape, output_shape, output_activation='linear', name=None):
     model.summary()
 
     return model
+
+
+def pi_actor(input_shape, output_shape):
+    # Create inputs
+    inputs = Input(shape=input_shape)
+    advs = Input(shape=1)
+    x = inputs
+
+    # Create one dense layer and one layer for output
+    x = Dense(8, activation='relu')(x)
+    x = Flatten()(x)
+    logits = Dense(output_shape)(x)
+
+    # Finally build model
+    model = Model(inputs=[inputs, advs], outputs=[logits, advs], name="pi")
+    model.summary()
+
+    return model
+
+
+def str_to_model(model_str: str, input_shape, output_shape, n_layers=1):
+    """
+    Build model from string:
+
+    'dense': Dense neural network
+    'conv': Convolutionnal neural network
+    """
+    if model_str == 'dense':
+        return dense(input_shape, output_shape)
+    elif model_str == 'pi_actor':
+        return pi_actor(input_shape, output_shape)
+    else:
+        raise NotImplementedError(f"Unknow model: {model_str}")

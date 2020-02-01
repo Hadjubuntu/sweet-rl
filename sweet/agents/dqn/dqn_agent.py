@@ -121,9 +121,13 @@ class DqnAgent(Agent):
         """
         Update model if replay buffer size is superior to batch_size
         """
+        loss = None
+
         if len(self.replay_buffer) >= batch_size:
-            self._update(batch_size)
+            loss = self._update(batch_size)
             self.nupdate += 1
+
+        return loss
 
     def _update(self, batch_size):
         # Sample minibatch from replay buffer
@@ -154,4 +158,5 @@ class DqnAgent(Agent):
         y = np.array(y)
 
         # Apply gradient descent
-        self.fast_apply_gradients(x, y)
+        loss = self.fast_apply_gradients(x, y)
+        return loss

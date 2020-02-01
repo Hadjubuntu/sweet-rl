@@ -1,38 +1,14 @@
-
-from tensorflow.keras.models import Model
-from tensorflow.keras.optimizers import Adam
-
 from sweet.agents.agent import Agent
-from tensorflow.keras.losses import MeanSquaredError
-
-
-from tensorflow.keras.models import Model
-from tensorflow.keras.layers import Dense, Flatten, Input
-
-
-def custom_dense(
-        input_shape,
-        output_shape,
-        output_activation='linear',
-        name=None):
-    # Create inputs
-    inputs = Input(shape=input_shape)
-    x = inputs
-
-    # Create one dense layer and one layer for output
-    x = Dense(64, activation='relu')(x)
-    x = Flatten()(x)
-    predictions = Dense(output_shape, activation=output_activation)(x)
-
-    # Finally build model
-    model = Model(inputs=inputs, outputs=predictions, name=name)
-    model.summary()
-
-    return model
+from sweet.interface.ml_platform import MLPlatform
 
 
 class A2CCritic(Agent):
-    def __init__(self, lr, input_shape):
+    def __init__(
+        self,
+        ml_platform: MLPlatform,
+        lr,
+        input_shape
+    ):
         """
         Critic part of A2C is an estimator of the value V(s).
         It is used to compute the function advantage: Adv(s,a)=Q(s,a)-V(s)
@@ -46,24 +22,13 @@ class A2CCritic(Agent):
                 Observation state shape
         """
         super().__init__(
-            lr,
-            None,
-            input_shape,
-            1,
-            optimizer=Adam,
-            loss=MeanSquaredError
-        )
-
-        # FIXME override model
-        self.model = custom_dense(
-            input_shape,
-            output_shape=1,
-            name='A2C_critic')
-
-        # Initialize model
-        self.model.compile(
-            loss=self.loss,
-            optimizer=self.optimizer
+            ml_platform=ml_platform,
+            lr=lr,
+            model='dense',
+            state_shape=input_shape,
+            action_size=1,
+            optimizer='adam',
+            loss='mean_squared_error'
         )
 
     def predict(self, obs):

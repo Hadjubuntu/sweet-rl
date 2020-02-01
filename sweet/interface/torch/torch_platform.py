@@ -1,9 +1,12 @@
 from sweet.interface.ml_platform import MLPlatform
-from sweet.interface.torch.default_models import dense
+from sweet.interface.torch.default_models import str_to_model
+from sweet.interface.torch.torch_custom_losses import loss_actor_critic
 
 import torch
 import torch.nn as nn
 import torch.optim as optim
+import torch.distributions.categorical as cat
+import torch.nn.functional as F
 
 
 class TorchPlatform(MLPlatform):
@@ -20,23 +23,51 @@ class TorchPlatform(MLPlatform):
         """
         Sample distribution
         """
-        raise NotImplementedError
+        logits_tensor = torch.tensor(logits)
+        logits_tensor_soft = F.softmax(logits_tensor, dim=-1)
+        m = cat.Categorical(logits_tensor_soft)
+
+        return m.sample()
 
     def fast_predict(self, x):
         """
         Model prediction against observation x
         """
-        x = torch.tensor(x)
-        output = self.model(x).detach().numpy()
+        if isinstance(x, list):
+            tensors = []
+            for element in x:
+                tensors.append(torch.tensor(element))
+
+            x = tensors
+        else:
+            x = torch.tensor(x)
+
+        raw_output = self.model(x)
+
+        # Convert from tensor to numpy array
+        if isinstance(raw_output, list):
+            output = raw_output
+            for idx, element in enumerate(raw_output):
+                output[idx] = element.detach().numpy()
+
+        else:
+            output = raw_output.detach().numpy()
+
         return output
 
     def fast_apply_gradients(self, x, y):
         """
         s
         """
-        x = torch.tensor(x)
+        if isinstance(x, list):
+            res = []
+            for element in x:
+                res.append(torch.tensor(element))
+            x = res
+        else:
+            x = torch.tensor(x)
         y_pred = self.model(x)
-        y = torch.tensor(y)
+        y = torch.tensor(y).float()
 
         loss = self.loss(y_pred, y)
 
@@ -51,6 +82,8 @@ class TorchPlatform(MLPlatform):
 
         if loss == 'mean_squared_error' or loss == 'mse':
             loss_out = nn.MSELoss()
+        elif loss == 'actor_categorical_crossentropy':
+            loss_out = loss_actor_critic()
         else:
             raise NotImplementedError(f'Loss not implemented so far: {loss}')
 
@@ -68,10 +101,16 @@ class TorchPlatform(MLPlatform):
     def _build_model(self, model='dense', state_shape=None, action_shape=None):
         """
         """
-        if isinstance(model, str):
-            model = dense(input_shape=state_shape, output_shape=action_shape)
+        model_output = model
 
-        return model
+        if isinstance(model, str):
+            model_output = str_to_model(
+                model,
+                input_shape=state_shape,
+                output_shape=action_shape
+            )
+
+        return model_output
 
     def save(self, target_path):
         if not target_path.endswith('.pth'):

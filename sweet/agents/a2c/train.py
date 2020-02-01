@@ -6,6 +6,7 @@ from pathlib import Path
 from collections import deque
 
 from sweet.interface.tf.tf_platform import TFPlatform
+from sweet.interface.torch.torch_platform import TorchPlatform
 from sweet.common.logging import init_logger
 from sweet.agents.agent_runner import Runner
 from sweet.agents.runner.stop_condition import NstepsStopCond
@@ -17,7 +18,7 @@ logger = logging.getLogger("a2c-train")
 
 
 def learn(
-    ml_platform=TFPlatform,
+    ml_platform=TorchPlatform,
     env_name='CartPole-v0',
     total_timesteps=1e5,
     nenvs=1,

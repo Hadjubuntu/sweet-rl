@@ -1,10 +1,11 @@
 from sweet.interface.ml_platform import MLPlatform
+from sweet.interface.tf.default_models import str_to_model
+from sweet.interface.tf.tf_custom_losses import loss_actor_critic
 
 import tensorflow as tf
 import tensorflow.keras.losses as kl
 import tensorflow.keras.optimizers as ko
 from tensorflow.keras.metrics import Mean
-from sweet.interface.tf.default_models import dense
 
 
 class TFPlatform(MLPlatform):
@@ -69,6 +70,8 @@ class TFPlatform(MLPlatform):
 
         if loss == 'mean_squared_error' or loss == 'mse':
             loss_out = kl.MeanSquaredError()
+        elif loss == 'actor_categorical_crossentropy':
+            loss_out = loss_actor_critic()
         else:
             raise NotImplementedError(f'Unknow loss in TF-platform: {loss}')
 
@@ -89,12 +92,18 @@ class TFPlatform(MLPlatform):
         """
         Build model from TF-Keras model or string
         """
+        model_output = model
+
         if isinstance(model, str):
-            model = dense(input_shape=state_shape, output_shape=action_shape)
+            model_output = str_to_model(
+                model,
+                input_shape=state_shape,
+                output_shape=action_shape
+            )
 
-        model.compile(loss=self.loss, optimizer=self.optimizer)
+        model_output.compile(loss=self.loss, optimizer=self.optimizer)
 
-        return model
+        return model_output
 
     def save(self, target_path):
         if not target_path.endswith('.h5'):

@@ -69,7 +69,9 @@ class Agent(ABC):
         """
         Update model wrt (x, y) data batch
         """
-        self.ml_platform.fast_apply_gradients(x, y)
+        loss = self.ml_platform.fast_apply_gradients(x, y)
+        
+        return loss
 
     @abstractmethod
     def act(self, obs):

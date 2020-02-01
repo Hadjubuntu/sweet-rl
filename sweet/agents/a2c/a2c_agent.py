@@ -46,8 +46,8 @@ class A2CAgent(Agent):
         )
 
         # TODO pass model actor/critic
-        self.actor = A2CActor(lr_actor, state_shape, action_size)
-        self.critic = A2CCritic(lr_critic, state_shape)
+        self.actor = A2CActor(ml_platform, lr_actor, state_shape, action_size)
+        self.critic = A2CCritic(ml_platform, lr_critic, state_shape)
 
         # Input/output shapes
         self.state_shape = state_shape

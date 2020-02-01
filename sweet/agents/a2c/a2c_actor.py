@@ -1,39 +1,19 @@
-from tensorflow.keras.models import Model
-from tensorflow.keras.optimizers import Adam
+
 
 from sweet.agents.agent import Agent
+from sweet.interface.ml_platform import MLPlatform
 
 import numpy as np
-import tensorflow as tf
-import tensorflow.keras.losses as kls
-
-
-from tensorflow.keras.models import Model
-from tensorflow.keras.layers import (
-    Dense, Input, LSTM, Embedding, Dropout, Activation, Flatten, Conv2D
-)
-
-
-def pi_model(input_shape, output_shape):
-    # Create inputs
-    inputs = Input(shape=input_shape)
-    advs = Input(shape=1)
-    x = inputs
-
-    # Create one dense layer and one layer for output
-    x = Dense(8, activation='relu')(x)
-    x = Flatten()(x)
-    logits = Dense(output_shape)(x)
-
-    # Finally build model
-    model = Model(inputs=[inputs, advs], outputs=[logits, advs], name="pi")
-    model.summary()
-
-    return model
 
 
 class A2CActor(Agent):
-    def __init__(self, lr, input_shape, output_shape):
+    def __init__(
+        self,
+        ml_platform: MLPlatform,
+        lr,
+        input_shape,
+        output_shape
+    ):
         """
         Initialize critic network of A2C
 
@@ -48,57 +28,14 @@ class A2CActor(Agent):
         """
 
         super().__init__(
-            lr,
-            None,
-            input_shape,
-            output_shape,
-            optimizer=Adam,
-            loss=None
-        )
-
-        # Output of this model are logits (log probability)
-        self.model = pi_model(input_shape, output_shape)
-        self.loss = self.loss_func(_entropy_coeff=0.0001)
-
-        # Initialize model
-        self.model.compile(
-            loss=self.loss,
-            optimizer=self.optimizer
-        )
-
-    def loss_func(self, _entropy_coeff=0.0001):
-        """
-        Loss for actor: policy loss + entropy
-        """
-        #  FIXME forced to use sparse categorical crossentropy due to y_true
-        # coming from actions without one-hot encoding
-        weighted_sparse_ce = kls.SparseCategoricalCrossentropy(
-            from_logits=True)
-        entropy_coeff = _entropy_coeff
-
-        def pi_loss(y_true, y_pred_and_advs):
-            y_pred, advs = y_pred_and_advs[0], y_pred_and_advs[1]
-            # First, one-hot encoding of true value y_true
-            y_true = tf.expand_dims(tf.cast(y_true, tf.int32), axis=1)
-            # No-need ? y_true = tf.one_hot(, self.action_size)
-
-            # Execute categorical crossentropy
-            neglogp = weighted_sparse_ce(
-                y_true,  # True actions chosen
-                y_pred,  # Logits from model
-                # sample_weight=advs
-            )
-            policy_loss = tf.reduce_mean(advs * neglogp)
-
-            entropy_loss = kls.categorical_crossentropy(
-                y_pred, y_pred,
-                from_logits=True
-            )
-
-            return policy_loss - entropy_coeff * entropy_loss
-
-        # Return a function
-        return pi_loss
+            ml_platform=ml_platform,
+            lr=lr,
+            model='pi_actor',
+            state_shape=input_shape,
+            action_size=output_shape,
+            optimizer='adam',
+            loss='actor_categorical_crossentropy'
+        ) 
 
     def act(self, obs):
         """
@@ -120,21 +57,23 @@ class A2CActor(Agent):
         """
         Update actor network
         """
-        loss_pi = self._apply_gradients(obs, actions, advs)
+        # Input of NN are observation and advantages
+        x = [obs, advs]
+        loss_pi = self.fast_apply_gradients(x, actions)
         return loss_pi
 
-    @tf.function
-    def _apply_gradients(self, x, y, advs):
-        """
-        CUSTOM for actor
-        """
-        with tf.GradientTape() as tape:
-            predictions = self.model([x, advs])
-            loss = self.loss(y, predictions)
+    # @tf.function
+    # def _apply_gradients(self, x, y, advs):
+    #     """
+    #     CUSTOM for actor
+    #     """
+    #     with tf.GradientTape() as tape:
+    #         predictions = self.model([x, advs])
+    #         loss = self.loss(y, predictions)
 
-        trainable_vars = self.model.trainable_weights
+    #     trainable_vars = self.model.trainable_weights
 
-        gradients = tape.gradient(loss, trainable_vars)
-        self.optimizer.apply_gradients(zip(gradients, trainable_vars))
+    #     gradients = tape.gradient(loss, trainable_vars)
+    #     self.optimizer.apply_gradients(zip(gradients, trainable_vars))
 
-        return self.eval_loss(loss)
+    #     return self.eval_loss(loss)
