@@ -29,6 +29,7 @@ def learn(
     gamma: float = 0.95,
     model_target_path: Path = Path('./target/model.h5'),
     model_checkpoint_freq: int = 50,
+    log_interval: int = 10,
 ):
     """
     Train agent with A2C algorithm
@@ -58,6 +59,9 @@ def learn(
         model_checkpoint_freq: int
             Save model each "model_checkpoint_freq" update
             (so each nenvs*nsteps)
+        log_interval: int
+            Network update frequency on which logs are printed out
+            (console + tensorboard)
     """
     # Load OpenAI Gym env
     env = gym.make(env_name)
@@ -117,16 +121,17 @@ def learn(
             model_checkpoint = model_checkpoint_freq
 
         # Logging
-        logger.info(f"Update #{nupdate}")
-        logger.info(f"total_timesteps={nbatch*nupdate}")
-        logger.info(f"FPS={fps}")
-        logger.info(f"explained_varaince={expl_variance}")
-        logger.info(f"Loss_actor={loss_actor}")
-        logger.info(f"Loss_critic={loss_critic}")
-        logger.info(f"Mean rewards={mean_episode_rew}")
-        logger.info(f"Mean episode length={mean_episode_length}")
-        logger.info(f"Time elapsed={dt_to_str(nseconds)}")
-        logger.info(f"ETA={dt_to_str(expected_remaining_dt)}")
+        if nupdate % log_interval == 0 or nupdate == 1:
+            logger.info(f"Update #{nupdate}")
+            logger.info(f"total_timesteps={nbatch*nupdate}")
+            logger.info(f"FPS={fps}")
+            logger.info(f"explained_varaince={expl_variance}")
+            logger.info(f"Loss_actor={loss_actor}")
+            logger.info(f"Loss_critic={loss_critic}")
+            logger.info(f"Mean rewards={mean_episode_rew}")
+            logger.info(f"Mean episode length={mean_episode_length}")
+            logger.info(f"Time elapsed={dt_to_str(nseconds)}")
+            logger.info(f"ETA={dt_to_str(expected_remaining_dt)}")
 
 
 if __name__ == "__main__":

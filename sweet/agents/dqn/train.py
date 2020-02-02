@@ -15,6 +15,7 @@ from sweet.agents.runner.stop_condition import (
     NstepsStopCond
 )
 
+all_logger = None  # TODO improve this
 logger = logging.getLogger("dqn-train")
 
 
@@ -30,6 +31,7 @@ def learn(
     replay_buffer: int = 2000,
     model_target_path: Path = Path('./target/model.h5'),
     model_checkpoint_freq: int = 1e3,
+    log_interval: int = 1,
 ):
     """
     Train model with DQN agent
@@ -60,6 +62,9 @@ def learn(
             (.h5 extension needed)
         model_checkpoint_freq: int
             Save model each "model_checkpoint_freq" steps
+        log_interval: int
+            Timesteps frequency on which logs are printed out
+            (console + tensorboard)
     """
     # Load OpenAI Gym env
     env = gym.make(env_name)
@@ -122,16 +127,20 @@ def learn(
             model_checkpoint = model_checkpoint_freq
 
         # Logging
-        logger.info(f"Update")
-        logger.info(f"total_timesteps={timesteps}")
-        logger.info(f"FPS={fps}")
-        logger.info(f"Mean rewards={mean_episode_rew}")
-        logger.info(f"Mean episode length={mean_episode_length}")
-        logger.info(f"Time elapsed={dt_to_str(nseconds)}")
-        logger.info(f"ETA={dt_to_str(expected_remaining_dt)}")
+        if timesteps % log_interval == 0:
+            logger.info(f"Update")
+
+            all_logger.record_tabular("total_timesteps", timesteps)
+            all_logger.record_tabular("FPS", fps)
+            all_logger.record_tabular("Mean rewards", mean_episode_rew)
+            all_logger.record_tabular(
+                "Mean episode length", mean_episode_length)
+            all_logger.record_tabular("Time elapsed", dt_to_str(nseconds))
+            all_logger.record_tabular("ETA", dt_to_str(expected_remaining_dt))
+            all_logger.dump_tabular()
 
 
 if __name__ == "__main__":
-    init_logger()
+    all_logger = init_logger()
 
     learn()
