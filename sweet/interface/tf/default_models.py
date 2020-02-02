@@ -5,8 +5,6 @@ from tensorflow.keras.layers import (
 )
 
 
-
-
 def dense(input_shape, output_shape, output_activation='linear', name=None):
     """
     Build a simple Dense model
@@ -24,7 +22,7 @@ def dense(input_shape, output_shape, output_activation='linear', name=None):
     """
     # Create inputs
     inputs = Input(shape=input_shape)
-    x = inputs
+    x = Flatten()(inputs)
 
     # Create one dense layer and one layer for output
     x = Dense(128, activation='tanh')(x)
@@ -42,10 +40,10 @@ def pi_actor(input_shape, output_shape):
     # Create inputs
     inputs = Input(shape=input_shape)
     advs = Input(shape=1)
-    x = inputs
+    x = Flatten()(inputs)
 
     # Create one dense layer and one layer for output
-    x = Dense(8, activation='relu')(x)
+    x = Dense(128, activation='relu')(x)
     x = Flatten()(x)
     logits = Dense(output_shape)(x)
 

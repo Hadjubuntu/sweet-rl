@@ -15,19 +15,20 @@ It's so sweet that you can switch from Tensorflow 2.1 to PyTorch 1.4 with a sing
 ### Install sweet-rl  
 
 First, create a virtualenv:  
-```
-python3.x -m venv ~/.virtualenvs/sweet/ # or: virtualenv ~/.virtualenvs/sweet/ -p python3
+```bash
+python3.x -m venv ~/.virtualenvs/sweet/ 
+# or: virtualenv ~/.virtualenvs/sweet/ -p python3
 source ~/.virtualenvs/sweet/bin/activate
 ```
 And then, install project dependancies:  
-```
+```bash
 make install # or pip install -e .
 ```
 
 ### First execution  
 
 Run a DQN training:  
-```
+```bash
 python sweet/agents/dqn/dqn_runner.py # Work in progress
 ```
 

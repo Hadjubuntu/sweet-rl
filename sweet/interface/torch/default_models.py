@@ -9,16 +9,20 @@ class TorchDense(nn.Module):
         super(TorchDense, self).__init__()
         input_size_flatten = self.num_flat_features(state_shape)
 
+        self.flatten = nn.Flatten(start_dim=1, end_dim=-1)
         self.h1 = nn.Linear(input_size_flatten, 128)
+        self.h2 = nn.Linear(128, 128)
         self.out = nn.Linear(128, action_size)
 
     def forward(self, x):
-        x = torch.relu(self.h1(x))
+        x = self.flatten(x)
+        x = torch.tanh(self.h1(x))
+        x = torch.tanh(self.h2(x))
         x = self.out(x)
         return x
 
     def num_flat_features(self, x):
-        return np.sum(x)
+        return np.prod(x)
 
 
 class TorchPiActor(nn.Module):
@@ -26,6 +30,7 @@ class TorchPiActor(nn.Module):
         super(TorchPiActor, self).__init__()
         input_size_flatten = self.num_flat_features(state_shape)
 
+        self.flatten = nn.Flatten(start_dim=1, end_dim=-1)
         self.h1 = nn.Linear(input_size_flatten, 128)
         self.out = nn.Linear(128, action_size)
 
@@ -37,13 +42,14 @@ class TorchPiActor(nn.Module):
         x1 = x[0]
         x2 = x[1]
 
-        x = torch.relu(self.h1(x1))
+        x = self.flatten(x1)
+        x = torch.relu(self.h1(x))
         x = self.out(x)
 
         return [x, x2]
 
     def num_flat_features(self, x):
-        return np.sum(x)
+        return np.prod(x)
 
 
 def str_to_model(model_str: str, input_shape, output_shape, n_layers=1):

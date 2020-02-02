@@ -18,6 +18,7 @@ class TorchPlatform(MLPlatform):
         self.model = self._build_model(model, state_shape, action_size)
         self.loss = self._build_loss(loss)
         self.optimizer = self._build_optimizer(optimizer, lr)
+        
 
     def sample(self, logits):
         """

@@ -18,8 +18,8 @@ logger = logging.getLogger("dqn-train")
 
 
 def learn(
-    ml_platform=TorchPlatform,
-    env_name='CartPole-v0',
+    ml_platform=TFPlatform,
+    env_name='Breakout-v0',
     total_timesteps=1e5,
     lr=0.01,
     gamma: float = 0.95,
