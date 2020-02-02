@@ -25,8 +25,8 @@ def dense(input_shape, output_shape, output_activation='linear', name=None):
     x = Flatten()(inputs)
 
     # Create one dense layer and one layer for output
-    x = Dense(128, activation='tanh')(x)
-    x = Dense(128, activation='tanh')(x)
+    x = Dense(8, activation='tanh')(x)
+    x = Dense(8, activation='tanh')(x)
     predictions = Dense(output_shape, activation='linear')(x)
 
     # Finally build model
@@ -43,7 +43,7 @@ def pi_actor(input_shape, output_shape):
     x = Flatten()(inputs)
 
     # Create one dense layer and one layer for output
-    x = Dense(128, activation='relu')(x)
+    x = Dense(8, activation='relu')(x)
     x = Flatten()(x)
     logits = Dense(output_shape)(x)
 

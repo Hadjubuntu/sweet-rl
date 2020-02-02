@@ -29,15 +29,18 @@ make install # or pip install -e .
 
 Run a DQN training:  
 ```bash
-python sweet/agents/dqn/dqn_runner.py # Work in progress
+python -m sweet.run --env=CartPole-V0 --algo=dqn --ml=tf
+
+# Parameters:
+
 ```
 
 ## Features, algorithms implemented
 
-| Algorithm     | Implementation status |               |
+| Algorithm     | Implementation status |  ML platform  |
 | ------------- | -------------         | ------------- |
-| DQN | <g-emoji class="g-emoji" alias="heavy_check_mark" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/2714.png">✔️</g-emoji>  |               |
-| A2C           | <g-emoji class="g-emoji" alias="heavy_check_mark" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/2714.png">✔️</g-emoji>  |               |
+| DQN | <g-emoji class="g-emoji" alias="heavy_check_mark" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/2714.png">✔️</g-emoji>  |  TF2, Torch |
+| A2C           | <g-emoji class="g-emoji" alias="heavy_check_mark" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/2714.png">✔️</g-emoji>  |  TF2, Torch   |
 | PPO           | Soon                  |               |
 
 

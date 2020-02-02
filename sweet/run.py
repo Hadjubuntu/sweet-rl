@@ -5,8 +5,13 @@ import os.path as osp
 import gym
 import numpy as np
 
-from sweet.agents.dqn.dqn_agent import DqnAgent
-from sweet.agents.agent_runner import learn
+from sweet.agents.dqn.train import learn as dqn_train
+from sweet.agents.a2c.train import learn as a2c_train
+
+from sweet.interface.tf.tf_platform import TFPlatform
+from sweet.interface.torch.torch_platform import TorchPlatform
+
+
 import logging
 import argparse
 
@@ -16,9 +21,33 @@ __email__ = "adrien.hadj.salah@gmail.com"
 """
 Entry-point of sweet RL.
 
-Usage:
-    python -m sweet.run -e CartPole-v0
+Example:
+    python -m sweet.run --env CartPole-v0 --algo=dqn
 """
+
+
+def make_agent_train_func(agent_str):
+    """
+    Build RL agent from string
+    """
+    if agent_str == 'dqn':
+        return dqn_train
+    elif agent_str == 'a2c':
+        return a2c_train
+    else:
+        raise NotImplementedError(f'Unknow agent: {agent_str}')
+
+
+def make_ml_platform(ml_platform_str):
+    """
+    Build ML platfrom from string
+    """
+    if ml_platform_str == 'tf':
+        return TFPlatform
+    elif ml_platform_str == 'torch':
+        return TorchPlatform
+    else:
+        raise NotImplementedError(f'Unknow ML platform: {ml_platform_str}')
 
 
 def main(args):
@@ -33,24 +62,35 @@ def main(args):
     # Parse arguments
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "-e",
+        "--env",
         type=str,
         help="Environment to play with",
         default="CartPole-v0")
+    parser.add_argument(
+        "--algo",
+        type=str,
+        help="RL agent",
+        default="dqn")
+    parser.add_argument(
+        "--ml",
+        type=str,
+        help="ML platform (tf or torch)",
+        default="tf")
     args = parser.parse_args()
 
-    env = args.e
+    # Build variables from arguments
+    env_str = args.env
+    agent_str = args.algo
+    ml_platform_str = args.ml
 
-    # Load OpenAI Gym env
-    env = gym.make(env)
+    agent_train_func = make_agent_train_func(agent_str)
 
-    # Load DQN agent
-    agent = DqnAgent(
-        state_shape=env.observation_space.shape,
-        action_size=env.action_space.n)
-
-    # Learn few steps
-    learn(env, agent, timesteps=1e2)
+    # Execute agent training
+    agent_train_func(
+        ml_platform=make_ml_platform(ml_platform_str),
+        env_name=env_str,
+        total_timesteps=1e2,
+        lr=0.01)
 
 
 if __name__ == '__main__':

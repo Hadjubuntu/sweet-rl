@@ -7,6 +7,7 @@ from pathlib import Path
 from sweet.interface.tf.tf_platform import TFPlatform
 from sweet.interface.torch.torch_platform import TorchPlatform
 from sweet.common.logging import init_logger
+from sweet.common.time import dt_to_str
 from sweet.agents.agent_runner import Runner
 from sweet.agents.dqn.dqn_agent import DqnAgent
 from sweet.agents.runner.stop_condition import (
@@ -18,8 +19,8 @@ logger = logging.getLogger("dqn-train")
 
 
 def learn(
-    ml_platform=TFPlatform,
-    env_name='Breakout-v0',
+    ml_platform=TorchPlatform,
+    env_name='CartPole-v0',
     total_timesteps=1e5,
     lr=0.01,
     gamma: float = 0.95,
@@ -108,6 +109,9 @@ def learn(
         nseconds = time.time() - tstart
         timesteps += len(rewards)
         fps = int(timesteps / nseconds)
+        expected_remaining_dt = (
+            total_timesteps - timesteps
+            ) / (fps + 1e-8)
 
         mean_episode_length = np.mean([x['steps'] for x in infos])
         mean_episode_rew = np.mean([x['rewards'] for x in infos])
@@ -123,6 +127,8 @@ def learn(
         logger.info(f"FPS={fps}")
         logger.info(f"Mean rewards={mean_episode_rew}")
         logger.info(f"Mean episode length={mean_episode_length}")
+        logger.info(f"Time elapsed={dt_to_str(nseconds)}")
+        logger.info(f"ETA={dt_to_str(expected_remaining_dt)}")
 
 
 if __name__ == "__main__":

@@ -12,19 +12,20 @@ from sweet.agents.agent_runner import Runner
 from sweet.agents.runner.stop_condition import NstepsStopCond
 from sweet.common.math import explained_variance
 from sweet.agents.a2c.a2c_agent import A2CAgent
+from sweet.common.time import dt_to_str
 
 
 logger = logging.getLogger("a2c-train")
 
 
 def learn(
-    ml_platform=TorchPlatform,
-    env_name='CartPole-v0',
-    total_timesteps=1e5,
+    ml_platform=TFPlatform,
+    env_name='BreakoutNoFrameskip-v4',
+    total_timesteps=1e7,
     nenvs=1,
     nsteps=32,
-    lr_actor=0.002,
-    lr_critic=0.001,
+    lr_actor=0.004,
+    lr_critic=0.002,
     gamma: float = 0.95,
     model_target_path: Path = Path('./target/model.h5'),
     model_checkpoint_freq: int = 50,
@@ -96,6 +97,9 @@ def learn(
         nseconds = time.time() - tstart
         fps = int((nupdate * nbatch) / nseconds)
         expl_variance = explained_variance(np.squeeze(values), rewards)
+        expected_remaining_dt = (
+            total_timesteps - (nupdate * nbatch)
+            ) / (fps + 1e-8)
 
         steps = [x['steps'] for x in infos]
         rewards = [x['rewards'] for x in infos]
@@ -121,6 +125,8 @@ def learn(
         logger.info(f"Loss_critic={loss_critic}")
         logger.info(f"Mean rewards={mean_episode_rew}")
         logger.info(f"Mean episode length={mean_episode_length}")
+        logger.info(f"Time elapsed={dt_to_str(nseconds)}")
+        logger.info(f"ETA={dt_to_str(expected_remaining_dt)}")
 
 
 if __name__ == "__main__":
