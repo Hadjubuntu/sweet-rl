@@ -50,6 +50,9 @@ class Logger():
 
         self.writer = tf.summary.create_file_writer(str(self.target_dir/'tb'))
 
+    def set_path(self, target_dir: Path=Path('./target/')):
+        self.target_dir = target_dir
+
     def info(self, s):
         self.logger.info(s)
 

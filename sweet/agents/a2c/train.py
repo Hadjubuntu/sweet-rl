@@ -22,6 +22,7 @@ logger = init_logger("a2c-train")
 def learn(
     ml_platform=TFPlatform,
     env_name='BreakoutNoFrameskip-v4',
+    model='dense',
     total_timesteps=1e7,
     nenvs=1,
     nsteps=32,
@@ -41,6 +42,8 @@ def learn(
             Machine Learning platform (either TF2 or Torch)
         env_name: str
             Name of OpenAI Gym environment
+        model: str or model from ML platform
+            Neural network or string describing neural network
         total_timesteps: int
             Number of training steps
         nenvs: int
@@ -72,7 +75,7 @@ def learn(
         ml_platform=ml_platform,
         state_shape=env.observation_space.shape,
         action_size=env.action_space.n,
-        model='dense',
+        model=model,
         lr_actor=0.004,
         lr_critic=0.002,
         gamma=0.95

@@ -76,12 +76,18 @@ def main(args):
         type=str,
         help="ML platform (tf or torch)",
         default="tf")
+    parser.add_argument(
+        "--model",
+        type=str,
+        help="Model (dense, conv, ..)",
+        default="dense")
     args = parser.parse_args()
 
     # Build variables from arguments
     env_str = args.env
     agent_str = args.algo
     ml_platform_str = args.ml
+    model_str = args.model
 
     agent_train_func = make_agent_train_func(agent_str)
 
@@ -89,6 +95,7 @@ def main(args):
     agent_train_func(
         ml_platform=make_ml_platform(ml_platform_str),
         env_name=env_str,
+        model=model_str,
         total_timesteps=1e2,
         lr=0.01)
 

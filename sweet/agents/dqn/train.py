@@ -21,6 +21,7 @@ logger = init_logger("dqn-train")
 def learn(
     ml_platform=TorchPlatform,
     env_name='CartPole-v0',
+    model='dense',
     total_timesteps=1e5,
     lr=0.01,
     gamma: float = 0.95,
@@ -41,6 +42,8 @@ def learn(
             Machine Learning platform (either TF2 or Torch)
         env_name: str
             Name of OpenAI Gym environment
+        model: str or model from ML platform
+            Neural network or string describing neural network
         total_timesteps: int
             Number of training steps
         lr: float or sweet.common.schedule.Schedule
@@ -73,7 +76,7 @@ def learn(
         ml_platform=ml_platform,
         state_shape=env.observation_space.shape,
         action_size=env.action_space.n,
-        model='dense',
+        model=model,
         lr=lr,
         gamma=gamma,
         epsilon=epsilon, epsilon_min=epsilon_min, epsilon_decay=epsilon_decay,
