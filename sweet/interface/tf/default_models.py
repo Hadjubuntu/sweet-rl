@@ -1,5 +1,5 @@
 
-from tensorflow.keras.models import Model, Sequential
+from tensorflow.keras.models import Model
 from tensorflow.keras.layers import (
     Dense, Input, LSTM, Embedding, Dropout, Activation, Flatten
 )

@@ -1,10 +1,8 @@
 import gym
-import logging
 import numpy as np
 import time
 from pathlib import Path
 
-from sweet.interface.tf.tf_platform import TFPlatform
 from sweet.interface.torch.torch_platform import TorchPlatform
 from sweet.common.logging import init_logger
 from sweet.common.time import dt_to_str

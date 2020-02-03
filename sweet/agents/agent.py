@@ -78,7 +78,6 @@ class Agent(ABC):
         """
         Determines action regarding current observation
         """
-        pass
 
     def discount_with_dones(self, rewards, dones, gamma):
         """
@@ -96,7 +95,6 @@ class Agent(ABC):
         """
         Callback function
         """
-        pass
 
     def _lr(self, t=0):
         """

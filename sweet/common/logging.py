@@ -3,7 +3,6 @@ import os
 from pathlib import Path
 from logging.handlers import RotatingFileHandler
 from collections import defaultdict
-import time
 
 import tensorflow as tf
 

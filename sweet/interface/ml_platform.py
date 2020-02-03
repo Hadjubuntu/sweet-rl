@@ -15,20 +15,17 @@ class MLPlatform(ABC):
         """
         Sample values from probability distribution
         """
-        pass
 
     @abstractmethod
     def fast_predict(self, x):
         """
         Model prediction from observation x
         """
-        pass
 
     @abstractmethod
     def fast_apply_gradients(self, x, y):
         """
         """
-        pass
 
     @abstractmethod
     def save(self, target_path):

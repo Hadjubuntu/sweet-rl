@@ -1,12 +1,10 @@
 import gym
-import logging
 import numpy as np
 import time
 from pathlib import Path
 from collections import deque
 
 from sweet.interface.tf.tf_platform import TFPlatform
-from sweet.interface.torch.torch_platform import TorchPlatform
 from sweet.common.logging import init_logger
 from sweet.agents.agent_runner import Runner
 from sweet.agents.runner.stop_condition import NstepsStopCond
