@@ -13,9 +13,10 @@ from sweet.agents.runner.stop_condition import NstepsStopCond
 from sweet.common.math import explained_variance
 from sweet.agents.a2c.a2c_agent import A2CAgent
 from sweet.common.time import dt_to_str
+from sweet.common.logging import init_logger
 
 
-logger = logging.getLogger("a2c-train")
+logger = init_logger("a2c-train")
 
 
 def learn(
@@ -123,18 +124,19 @@ def learn(
         # Logging
         if nupdate % log_interval == 0 or nupdate == 1:
             logger.info(f"Update #{nupdate}")
-            logger.info(f"total_timesteps={nbatch*nupdate}")
-            logger.info(f"FPS={fps}")
-            logger.info(f"explained_varaince={expl_variance}")
-            logger.info(f"Loss_actor={loss_actor}")
-            logger.info(f"Loss_critic={loss_critic}")
-            logger.info(f"Mean rewards={mean_episode_rew}")
-            logger.info(f"Mean episode length={mean_episode_length}")
-            logger.info(f"Time elapsed={dt_to_str(nseconds)}")
-            logger.info(f"ETA={dt_to_str(expected_remaining_dt)}")
+
+            logger.record_tabular("total_timesteps", nbatch*nupdate)
+            logger.record_tabular("FPS", fps)
+            logger.record_tabular("explained_varaince", expl_variance)
+            logger.record_tabular("Loss_actor", loss_actor)
+            logger.record_tabular("Loss_critic", loss_critic)
+            logger.record_tabular("Mean rewards", mean_episode_rew)
+            logger.record_tabular("Mean episode length", mean_episode_length)
+            logger.record_tabular("Time elapsed", dt_to_str(nseconds))
+            logger.record_tabular("ETA", dt_to_str(expected_remaining_dt))
+
+            logger.dump_tabular()
 
 
 if __name__ == "__main__":
-    init_logger()
-
     learn()

@@ -8,7 +8,7 @@ import time
 import tensorflow as tf
 
 
-def init_logger(log_in_file=True, target_dir=Path('./target/')):
+def init_logger(scope="root", log_in_file=True, target_dir=Path('./target/')):
     """
     Create a default logger handler that handle:
     - File logging
@@ -17,23 +17,30 @@ def init_logger(log_in_file=True, target_dir=Path('./target/')):
 
     Parameters
     ----------
+        scope: str
+            Logger name
         log_in_file: boolean
             True if you want to export logs in text file
         target_dir: Path
             Directory of logs (needed if log_in_file is true)
     """
-    logger = Logger(log_in_file, target_dir=target_dir)
+    logger = Logger(scope, log_in_file, target_dir=target_dir)
     return logger
 
 
 class Logger():
-    def __init__(self, log_in_file=True, target_dir=Path('./target/')):
+    def __init__(
+        self,
+        scope="root",
+        log_in_file=True,
+        target_dir=Path('./target/')
+    ):
         """
         Create logger
         """
         self.target_dir = target_dir
 
-        self.logger = logging.getLogger()
+        self.logger = logging.getLogger(scope)
         self.init_console_logger()
         if log_in_file:
             self.init_file_logger(self.target_dir)
@@ -42,6 +49,15 @@ class Logger():
         self.step = 0
 
         self.writer = tf.summary.create_file_writer(str(self.target_dir/'tb'))
+
+    def info(self, s):
+        self.logger.info(s)
+
+    def debug(self, s):
+        self.logger.debug(s)
+
+    def error(self, s):
+        self.logger.error(s)
 
     def record_tabular(self, k, v):
         self.name2val[k] = v

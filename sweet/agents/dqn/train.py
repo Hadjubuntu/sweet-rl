@@ -15,8 +15,7 @@ from sweet.agents.runner.stop_condition import (
     NstepsStopCond
 )
 
-all_logger = init_logger()
-logger = logging.getLogger("dqn-train")
+logger = init_logger("dqn-train")
 
 
 def learn(
@@ -130,14 +129,14 @@ def learn(
         if timesteps % log_interval == 0:
             logger.info(f"Update")
 
-            all_logger.record_tabular("total_timesteps", timesteps)
-            all_logger.record_tabular("FPS", fps)
-            all_logger.record_tabular("Mean rewards", mean_episode_rew)
-            all_logger.record_tabular(
+            logger.record_tabular("total_timesteps", timesteps)
+            logger.record_tabular("FPS", fps)
+            logger.record_tabular("Mean rewards", mean_episode_rew)
+            logger.record_tabular(
                 "Mean episode length", mean_episode_length)
-            all_logger.record_tabular("Time elapsed", dt_to_str(nseconds))
-            all_logger.record_tabular("ETA", dt_to_str(expected_remaining_dt))
-            all_logger.dump_tabular()
+            logger.record_tabular("Time elapsed", dt_to_str(nseconds))
+            logger.record_tabular("ETA", dt_to_str(expected_remaining_dt))
+            logger.dump_tabular()
 
 
 if __name__ == "__main__":
