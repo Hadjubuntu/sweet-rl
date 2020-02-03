@@ -32,8 +32,17 @@ Run a DQN training:
 python -m sweet.run --env=CartPole-V0 --algo=dqn --ml=tf
 
 # Parameters:
-
+#  -h, --help     show this help message and exit
+#  --env ENV      Environment to play with (eg. 'CartPole-v0')
+#  --algo ALGO    RL agent ('dqn', 'a2c')
+#  --ml ML        ML platform ('tf' or 'torch')
+#  --model MODEL  Model ('dense', 'conv')
 ```
+
+### Custom neural network
+
+If you want to specify your own model instead of default ones, take a look to
+`sweet.agents.dqn.experiments.train_custom_model`
 
 ## Features, algorithms implemented
 
@@ -50,10 +59,12 @@ python -m sweet.run --env=CartPole-V0 --algo=dqn --ml=tf
 * Tensorflow 2.x doesn't work with Python 3.8 so far, so only Python versions 3.6 and 3.7 are supported
 
 
-## History/Author(s)
+## History/Author
 
-I started this open-source RL framework in january 2020 as a consecration of my passion for Reinforcement Learning.
+I started this open-source RL framework in january 2020, at first to take benefit of tensorflow 2.x readability without sacrifying the performance.
 Besides coding open-source project, i work for both Airbus and IRT Saint-Exupéry on Earth Observation satellites. Our team is focus on mission planning for satellites and Reinforcement Learning is an approach to solve it. Feel free to discuss with me: [Adrien HADJ-SALAH @linkedin](https://www.linkedin.com/in/adrien-hadj-salah-1b119462/)
+
+**You are welcome to participate to this project**
 
 ## RL related topics
 

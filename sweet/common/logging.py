@@ -1,10 +1,11 @@
+import tensorflow as tf
 import logging
 import os
+import json
+
 from pathlib import Path
 from logging.handlers import RotatingFileHandler
 from collections import defaultdict
-
-import tensorflow as tf
 
 
 def init_logger(scope="root", log_in_file=True, target_dir=Path('./target/')):
@@ -63,6 +64,23 @@ class Logger():
 
     def record_tabular(self, k, v):
         self.name2val[k] = v
+
+    def save(self, path: Path, data: dict):
+        """
+        Save a dictionnary into a file.
+        Useful to save configuration
+        """
+        self.info(data)
+        os.makedirs(path.parent, exist_ok=True)
+
+        # Force conversion of object (classes) to string
+        # preventing json dumps error
+        for k in data.keys():
+            if not isinstance(data[k], str):
+                data[k] = str(data[k])
+
+        with open(path, 'w') as f:
+            json.dump(data, f)
 
     def dump_tabular(self):
         # Tensorboard export

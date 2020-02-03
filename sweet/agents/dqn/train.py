@@ -66,6 +66,10 @@ def learn(
             Timesteps frequency on which logs are printed out
             (console + tensorboard)
     """
+    # Save configuration into file
+    # TODO make output dir
+    logger.save(Path('./target/configuration.json'), locals())
+
     # Load OpenAI Gym env
     env = gym.make(env_name)
 
