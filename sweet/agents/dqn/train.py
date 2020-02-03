@@ -15,7 +15,7 @@ from sweet.agents.runner.stop_condition import (
     NstepsStopCond
 )
 
-all_logger = None  # TODO improve this
+all_logger = init_logger()
 logger = logging.getLogger("dqn-train")
 
 
@@ -141,6 +141,4 @@ def learn(
 
 
 if __name__ == "__main__":
-    all_logger = init_logger()
-
     learn()
