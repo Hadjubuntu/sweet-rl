@@ -1,8 +1,6 @@
 import numpy as np
 
 from sweet.agents.agent import Agent
-from sweet.agents.a2c.a2c_actor import A2CActor
-from sweet.agents.a2c.a2c_critic import A2CCritic
 from sweet.interface.ml_platform import MLPlatform
 
 
@@ -24,10 +22,10 @@ class A2CAgent(Agent):
             Number of actions (Discrete only so far)
         model: Model or str
             Neural network model or string representing NN (dense, cnn)
-        lr_actor: float or sweet.common.schedule.Schedule
+        lr: float or sweet.common.schedule.Schedule
             Learning rate for Actor (Policy)
-        lr_critic: float or sweet.common.schedule.Schedule
-            Learning rate for Critic (Value estimator)
+        coeff_critic: float
+            Ratio of critic loss compared to policy loss
         gamma: float
             Discount factor
     """
@@ -36,18 +34,17 @@ class A2CAgent(Agent):
                  ml_platform: MLPlatform,
                  state_shape,
                  action_size,
-                 model='dense',
-                 lr_actor=0.004,
-                 lr_critic=0.002,
-                 gamma: float = 0.95):
+                 model='pi_actor_critic',
+                 lr=0.003,
+                 coeff_critic=0.5,
+                 gamma: float = 0.95,
+                 optimizer='adam',
+                 loss='actor_categorical_crossentropy'):
         # Generic initialization
         super().__init__(
-            ml_platform, lr_actor, model, state_shape, action_size
+            ml_platform, lr, model, state_shape, action_size,
+            optimizer=optimizer, loss=loss
         )
-
-        # TODO pass model actor/critic
-        self.actor = A2CActor(ml_platform, lr_actor, state_shape, action_size)
-        self.critic = A2CCritic(ml_platform, lr_critic, state_shape)
 
         # Input/output shapes
         self.state_shape = state_shape
@@ -75,8 +72,15 @@ class A2CAgent(Agent):
         # Reshape obs expecting (nb_batch, obs_shape..) and got (obs_shape)
         obs = self.encode(obs)
 
-        action = self.actor.act(obs)
-        value = self.critic.predict(obs)
+        # As we need advs to pass in model, create a zero vector
+        zero_advs = np.zeros((obs.shape[0], 1))
+
+        # Models returns logits and given advantages
+        action_logits, advs, value = self.fast_predict([obs, zero_advs])
+
+        # So we can sample an action from that probability distribution
+        action_sample_np = self.sample(action_logits).numpy()
+        action = action_sample_np[0]
 
         return action, value
 
@@ -97,13 +101,17 @@ class A2CAgent(Agent):
 
         # Compute advantage / TD-error A(s,a)=Q(s,a)-V(s) (Note advantages is
         # an array of dim (nbatch, nactions))
-        advs = np.zeros((len(obs), 1))
-        V = self.critic.predict(obs)
+        advs = np.zeros((len(obs), 1))       
+        V = self.fast_predict([obs, advs])[2]
 
         advs[:] = discounted_reward - V
 
         # Update both actor and critic
-        loss_critic = self.critic.update(obs, discounted_reward)
-        loss_actor = self.actor.update(obs, actions, advs)
 
-        return loss_actor, loss_critic
+        x = [obs, advs]
+        y = [actions, discounted_reward]
+        loss_pi = self.fast_apply_gradients(x, y)
+        
+        # TODO retrieve loss actor and critic
+
+        return loss_pi

@@ -24,7 +24,7 @@ class TorchDense(nn.Module):
         return np.prod(x)
 
 
-class TorchPiActor(nn.Module):
+class TorchPiActorCritic(nn.Module):
     def __init__(self, state_shape, action_size: int):
         super(TorchPiActor, self).__init__()
         input_size_flatten = self.num_flat_features(state_shape)
@@ -32,6 +32,7 @@ class TorchPiActor(nn.Module):
         self.flatten = nn.Flatten(start_dim=1, end_dim=-1)
         self.h1 = nn.Linear(input_size_flatten, 128)
         self.out = nn.Linear(128, action_size)
+        self.out_value = nn.Linear(128, 1)
 
     def forward(self, x):
         """
@@ -43,9 +44,12 @@ class TorchPiActor(nn.Module):
 
         x = self.flatten(x1)
         x = torch.relu(self.h1(x))
-        x = self.out(x)
 
-        return [x, x2]
+        # Outputs
+        logits = self.out(x)
+        value = self.out_value(x)
+
+        return [logits, x2]
 
     def num_flat_features(self, x):
         return np.prod(x)
@@ -60,7 +64,7 @@ def str_to_model(model_str: str, input_shape, output_shape, n_layers=1):
     """
     if model_str == 'dense':
         return TorchDense(input_shape, output_shape)
-    elif model_str == 'pi_actor':
-        return TorchPiActor(input_shape, output_shape)
+    elif model_str == 'pi_actor_critic':
+        return TorchPiActorCritic(input_shape, output_shape)
     else:
         raise NotImplementedError(f"Unknow model: {model_str}")

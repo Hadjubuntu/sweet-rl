@@ -37,7 +37,7 @@ def dense(input_shape, output_shape, output_activation='linear', name=None):
     return model
 
 
-def pi_actor(input_shape, output_shape):
+def pi_actor_critic(input_shape, output_shape):
     # Create inputs
     inputs = Input(shape=input_shape)
     advs = Input(shape=1)
@@ -47,9 +47,14 @@ def pi_actor(input_shape, output_shape):
     x = Dense(128, activation='relu')(x)
     
     logits = Dense(output_shape)(x)
+    value = Dense(1, activation='linear')(x)
 
     # Finally build model
-    model = Model(inputs=[inputs, advs], outputs=[logits, advs], name="pi")
+    model = Model(
+        inputs=[inputs, advs],
+        outputs=[logits, advs, value],
+        name="pi"
+    )
     model.summary()
 
     return model
@@ -64,7 +69,7 @@ def str_to_model(model_str: str, input_shape, output_shape, n_layers=1):
     """
     if model_str == 'dense':
         return dense(input_shape, output_shape)
-    elif model_str == 'pi_actor':
-        return pi_actor(input_shape, output_shape)
+    elif model_str == 'pi_actor_critic':
+        return pi_actor_critic(input_shape, output_shape)
     else:
         raise NotImplementedError(f"Unknow model: {model_str}")

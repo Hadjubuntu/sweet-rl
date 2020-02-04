@@ -16,13 +16,13 @@ from sweet.common.utils import now_str
 
 def learn(
     ml_platform=TFPlatform,
-    env_name='CartPole-v0',
-    model='dense',
+    env_name='BreakoutNoFrameskip-v4',
+    model='pi_actor_critic',
     total_timesteps=1e7,
     nenvs=1,
     nsteps=32,
-    lr_actor=0.002,
-    lr_critic=0.004,
+    lr=0.002,
+    coeff_critic=0.5,
     gamma: float = 0.95,
     model_checkpoint_freq: int = 1e5,
     log_interval: int = 10,
@@ -91,8 +91,8 @@ def learn(
         state_shape=env.observation_space.shape,
         action_size=env.action_space.n,
         model=model,
-        lr_actor=lr_actor,
-        lr_critic=lr_critic,
+        lr=lr,
+        coeff_critic=coeff_critic,
         gamma=0.95
     )
 
@@ -111,7 +111,7 @@ def learn(
         obs, _, rewards, actions, dones, values, infos = runner.run()
 
         # Optimize both actor and critic with gradient descent
-        loss_actor, loss_critic = agent.update(
+        loss_pi = agent.update(
             obs, rewards, actions, dones, values)
 
         # Post-processing (logging, ..)
@@ -144,8 +144,7 @@ def learn(
             logger.record_tabular("total_timesteps", nbatch*nupdate)
             logger.record_tabular("FPS", fps)
             logger.record_tabular("explained_varaince", expl_variance)
-            logger.record_tabular("Loss_actor", loss_actor)
-            logger.record_tabular("Loss_critic", loss_critic)
+            logger.record_tabular("Loss_pi", loss_pi)
             logger.record_tabular("Mean rewards", mean_episode_rew)
             logger.record_tabular("Mean episode length", mean_episode_length)
             logger.record_tabular("Time elapsed", dt_to_str(nseconds))
