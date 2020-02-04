@@ -74,6 +74,10 @@ To reproduce benchmark, execute:
 python -m sweet.benchmark.benchmark_runner
 ```
 
+Here is an example of benchmark between TF 2.0 and Torch 1.4 with CartPole-v0 environment:  
+![Benchmark RL](https://raw.githubusercontent.com/Hadjubuntu/sweet-rl/develop/misc/benchmark-example.png)
+
+
 ## Troubleshootings
 
 * Tensorflow 2.x doesn't work with Python 3.8 so far, so only Python versions 3.6 and 3.7 are supported
