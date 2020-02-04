@@ -26,7 +26,7 @@ class TorchDense(nn.Module):
 
 class TorchPiActorCritic(nn.Module):
     def __init__(self, state_shape, action_size: int):
-        super(TorchPiActor, self).__init__()
+        super(TorchPiActorCritic, self).__init__()
         input_size_flatten = self.num_flat_features(state_shape)
 
         self.flatten = nn.Flatten(start_dim=1, end_dim=-1)
@@ -49,7 +49,7 @@ class TorchPiActorCritic(nn.Module):
         logits = self.out(x)
         value = self.out_value(x)
 
-        return [logits, x2]
+        return [logits, x2, value]
 
     def num_flat_features(self, x):
         return np.prod(x)

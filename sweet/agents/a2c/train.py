@@ -5,6 +5,7 @@ from pathlib import Path
 from collections import deque
 
 from sweet.interface.tf.tf_platform import TFPlatform
+from sweet.interface.torch.torch_platform import TorchPlatform
 from sweet.common.logging import Logger
 from sweet.agents.agent_runner import Runner
 from sweet.agents.runner.stop_condition import NstepsStopCond
@@ -15,7 +16,7 @@ from sweet.common.utils import now_str
 
 
 def learn(
-    ml_platform=TFPlatform,
+    ml_platform=TorchPlatform,
     env_name='BreakoutNoFrameskip-v4',
     model='pi_actor_critic',
     total_timesteps=1e7,

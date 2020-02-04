@@ -39,7 +39,7 @@ def loss_actor_critic(_action_size,  _coeff_vf=0.5, _entropy_coeff=0.01):
         )
 
         loss_vf = kls.mean_squared_error(vf, vf_true)
-        
+
         return policy_loss - entropy_coeff * entropy_loss + coeff_vf * loss_vf
 
     # Return a function
