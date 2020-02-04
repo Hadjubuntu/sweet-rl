@@ -77,7 +77,7 @@ python -m sweet.benchmark.benchmark_runner
 ## Troubleshootings
 
 * Tensorflow 2.x doesn't work with Python 3.8 so far, so only Python versions 3.6 and 3.7 are supported
-
+* GPU is not used. See https://www.tensorflow.org/install/gpu
 
 ## History/Author
 

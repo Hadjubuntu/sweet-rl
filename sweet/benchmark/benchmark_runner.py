@@ -13,8 +13,11 @@ from sweet.run import make_agent_train_func, make_ml_platform
 def benchmark_runner():
     # Benchmark configuration
     agents = ['dqn', 'a2c']
-    envs = ['Acrobot-v1', 'CartPole-v1', 'MountainCar-v0']
-    ml_platforms = ['tf', 'torch']
+    envs = ['Acrobot-v1',
+            'CartPole-v1',
+            'MountainCar-v0',
+            'BreakoutNoFrameskip-v4']
+    ml_platforms = ['torch', 'tf']
 
     # Create all configuration
     benchmark_combinations = list(it.product(
@@ -56,7 +59,7 @@ def benchmark_runner():
                 env_name=env_name,
                 model='dense',
                 total_timesteps=1e6,
-                lr=0.004,
+                lr=0.008,
                 targets={
                     'output_dir': run_target_dir / specific_run_target,
                     'models_dir': 'models_checkpoints',
