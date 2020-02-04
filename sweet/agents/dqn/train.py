@@ -4,7 +4,7 @@ import time
 from pathlib import Path
 
 from sweet.interface.torch.torch_platform import TorchPlatform
-from sweet.common.logging import init_logger
+from sweet.common.logging import Logger
 from sweet.common.time import dt_to_str
 from sweet.agents.agent_runner import Runner
 from sweet.agents.dqn.dqn_agent import DqnAgent
@@ -12,8 +12,7 @@ from sweet.agents.runner.stop_condition import (
     EpisodeDoneStopCond,
     NstepsStopCond
 )
-
-logger = init_logger("dqn-train")
+from sweet.common.utils import now_str
 
 
 def learn(
@@ -27,9 +26,14 @@ def learn(
     epsilon_min: float = 0.01,
     epsilon_decay: float = 0.995,
     replay_buffer: int = 2000,
-    model_target_path: Path = Path('./target/model.h5'),
-    model_checkpoint_freq: int = 1e3,
+    model_checkpoint_freq: int = 1e5,
     log_interval: int = 1,
+    targets: dict = {
+        'output_dir': Path('./target/'),
+        'models_dir': 'models_checkpoints',
+        'logs_dir': 'logs',
+        'tb_dir': 'tb_events'
+    }
 ):
     """
     Train model with DQN agent
@@ -57,18 +61,31 @@ def learn(
             Decay of exploration at each update
         replay_buffer: int
             Size of the  replay buffer
-        model_target_path: Path
-            Path to the model in order to save while learning
-            (.h5 extension needed)
         model_checkpoint_freq: int
             Save model each "model_checkpoint_freq" steps
         log_interval: int
             Timesteps frequency on which logs are printed out
             (console + tensorboard)
+        targets: dict
+            Output directories:
+                output_dir: Main target directory
+                run_format_dir: Current run target directory
+                models_dir: Models checkpoint directory
+                logs_dir: Logs directory
+                tb_dir: TensorBoard event files directory
+
+
     """
-    # Save configuration into file
-    # TODO make output dir
-    logger.save(Path('./target/configuration.json'), locals())
+    # Target paths and save conf
+    run_target_dir = targets['output_dir'] / f"run_{now_str()}"
+    models_dir = run_target_dir / targets['models_dir']
+
+    logger = Logger(
+        "dqn-train",
+        target_dir=run_target_dir,
+        logs_dir=targets['logs_dir'],
+        tb_dir=targets['tb_dir'])
+    logger.save(run_target_dir / Path('configuration.json'), locals())
 
     # Load OpenAI Gym env
     env = gym.make(env_name)
@@ -127,7 +144,7 @@ def learn(
 
         # Save model
         if (timesteps - model_checkpoint) > model_checkpoint_freq:
-            agent.save_model(model_target_path)
+            agent.save_model(models_dir / f'model-{timesteps}')
             model_checkpoint = model_checkpoint_freq
 
         # Logging

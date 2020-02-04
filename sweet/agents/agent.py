@@ -1,5 +1,7 @@
-from abc import ABC, abstractmethod
 import numpy as np
+import os
+from abc import ABC, abstractmethod
+from pathlib import Path
 
 from sweet.common.schedule import Schedule
 from sweet.interface.ml_platform import MLPlatform
@@ -52,10 +54,11 @@ class Agent(ABC):
         var = np.expand_dims(var, axis=0)
         return var.astype(np.float32)
 
-    def save_model(self, target_path):
+    def save_model(self, target_path: Path):
         """
         Save model to file (HDF5 for tensorflow, Pth for Torch)
         """
+        os.makedirs(target_path.parent, exist_ok=True)
         target_path = str(target_path)
         self.ml_platform.save(target_path)
 

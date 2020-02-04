@@ -8,50 +8,40 @@ from logging.handlers import RotatingFileHandler
 from collections import defaultdict
 
 
-def init_logger(scope="root", log_in_file=True, target_dir=Path('./target/')):
-    """
-    Create a default logger handler that handle:
-    - File logging
-    - Console logging
-    - Tensorboard logging
-
-    Parameters
-    ----------
-        scope: str
-            Logger name
-        log_in_file: boolean
-            True if you want to export logs in text file
-        target_dir: Path
-            Directory of logs (needed if log_in_file is true)
-    """
-    logger = Logger(scope, log_in_file, target_dir=target_dir)
-    return logger
-
-
 class Logger():
     def __init__(
         self,
         scope="root",
+        target_dir=Path('./target/'),
+        logs_dir=Path('logs'),
+        tb_dir=Path('tb_events'),
         log_in_file=True,
-        target_dir=Path('./target/')
     ):
         """
         Create logger
+
+        Parameters
+        ----------
+            scope: str
+                Logger name
+            target_dir: Path
+                Directory of logs (needed if log_in_file is true)
+            log_in_file: boolean
+                True if you want to export logs in text file
         """
         self.target_dir = target_dir
 
         self.logger = logging.getLogger(scope)
         self.init_console_logger()
         if log_in_file:
-            self.init_file_logger(self.target_dir)
+            self.init_file_logger(self.target_dir / logs_dir)
 
         self.name2val = defaultdict()
         self.step = 0
 
-        self.writer = tf.summary.create_file_writer(str(self.target_dir/'tb'))
-
-    def set_path(self, target_dir: Path=Path('./target/')):
-        self.target_dir = target_dir
+        self.writer = tf.summary.create_file_writer(
+            str(self.target_dir/tb_dir)
+        )
 
     def info(self, s):
         self.logger.info(s)
@@ -80,7 +70,7 @@ class Logger():
                 data[k] = str(data[k])
 
         with open(path, 'w') as f:
-            json.dump(data, f)
+            json.dump(data, f, indent=4)
 
     def dump_tabular(self):
         # Tensorboard export
