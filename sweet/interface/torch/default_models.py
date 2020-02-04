@@ -9,9 +9,9 @@ class TorchDense(nn.Module):
         input_size_flatten = self.num_flat_features(state_shape)
 
         self.flatten = nn.Flatten(start_dim=1, end_dim=-1)
-        self.h1 = nn.Linear(input_size_flatten, 16)
-        self.h2 = nn.Linear(16, 16)
-        self.out = nn.Linear(16, action_size)
+        self.h1 = nn.Linear(input_size_flatten, 128)
+        self.h2 = nn.Linear(128, 128)
+        self.out = nn.Linear(128, action_size)
 
     def forward(self, x):
         x = self.flatten(x)
@@ -30,8 +30,8 @@ class TorchPiActor(nn.Module):
         input_size_flatten = self.num_flat_features(state_shape)
 
         self.flatten = nn.Flatten(start_dim=1, end_dim=-1)
-        self.h1 = nn.Linear(input_size_flatten, 16)
-        self.out = nn.Linear(16, action_size)
+        self.h1 = nn.Linear(input_size_flatten, 128)
+        self.out = nn.Linear(128, action_size)
 
     def forward(self, x):
         """

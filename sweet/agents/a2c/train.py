@@ -16,13 +16,13 @@ from sweet.common.utils import now_str
 
 def learn(
     ml_platform=TFPlatform,
-    env_name='BreakoutNoFrameskip-v4',
+    env_name='CartPole-v0',
     model='dense',
     total_timesteps=1e7,
     nenvs=1,
     nsteps=32,
-    lr_actor=0.004,
-    lr_critic=0.002,
+    lr_actor=0.002,
+    lr_critic=0.004,
     gamma: float = 0.95,
     model_checkpoint_freq: int = 1e5,
     log_interval: int = 10,
@@ -91,13 +91,11 @@ def learn(
         state_shape=env.observation_space.shape,
         action_size=env.action_space.n,
         model=model,
-        lr_actor=0.004,
-        lr_critic=0.002,
+        lr_actor=lr_actor,
+        lr_critic=lr_critic,
         gamma=0.95
     )
 
-    nenvs = 1
-    nsteps = 32
     nbatch = nenvs * nsteps
     nudpates = int(total_timesteps // nbatch + 1)
     model_checkpoint = 0

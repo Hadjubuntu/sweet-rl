@@ -19,6 +19,8 @@ class A2CActor(Agent):
 
         Parameters
         ----------
+            ml_platform: sweet.interface.MLPlatform
+                Machine Learning platform (either TF2 or Torch)
             lr: float or sweet.common.schedule.Schedule
                 Learning rate
             input_shape: shape
@@ -62,18 +64,3 @@ class A2CActor(Agent):
         loss_pi = self.fast_apply_gradients(x, actions)
         return loss_pi
 
-    # @tf.function
-    # def _apply_gradients(self, x, y, advs):
-    #     """
-    #     CUSTOM for actor
-    #     """
-    #     with tf.GradientTape() as tape:
-    #         predictions = self.model([x, advs])
-    #         loss = self.loss(y, predictions)
-
-    #     trainable_vars = self.model.trainable_weights
-
-    #     gradients = tape.gradient(loss, trainable_vars)
-    #     self.optimizer.apply_gradients(zip(gradients, trainable_vars))
-
-    #     return self.eval_loss(loss)

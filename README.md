@@ -29,7 +29,7 @@ make install # or pip install -e .
 
 Run a DQN training:  
 ```bash
-python -m sweet.run --env=CartPole-V0 --algo=dqn --ml=tf
+python -m sweet.run --env=CartPole-v0 --algo=dqn --ml=tf
 
 # Parameters:
 #  -h, --help     show this help message and exit

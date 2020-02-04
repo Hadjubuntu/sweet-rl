@@ -1,7 +1,7 @@
 
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import (
-    Dense, Input, LSTM, Embedding, Dropout, Activation, Flatten
+    Dense, Conv2D, Input, LSTM, Embedding, Dropout, Activation, Flatten
 )
 
 
@@ -25,8 +25,9 @@ def dense(input_shape, output_shape, output_activation='linear', name=None):
     x = Flatten()(inputs)
 
     # Create one dense layer and one layer for output
-    x = Dense(16, activation='tanh')(x)
-    x = Dense(16, activation='tanh')(x)
+    x = Dense(128, activation='tanh')(x)
+    x = Dense(128, activation='tanh')(x)
+    
     predictions = Dense(output_shape, activation='linear')(x)
 
     # Finally build model
@@ -43,8 +44,8 @@ def pi_actor(input_shape, output_shape):
     x = Flatten()(inputs)
 
     # Create one dense layer and one layer for output
-    x = Dense(16, activation='relu')(x)
-    x = Flatten()(x)
+    x = Dense(128, activation='relu')(x)
+    
     logits = Dense(output_shape)(x)
 
     # Finally build model

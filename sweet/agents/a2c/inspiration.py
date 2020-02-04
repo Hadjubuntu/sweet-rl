@@ -158,7 +158,7 @@ class A2CAgent:
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.INFO)
 
-    env = gym.make('CartPole-v0')
+    env = gym.make('Acrobot-v1')
     model = Model(num_actions=env.action_space.n)
     agent = A2CAgent(model)
 

@@ -1,13 +1,12 @@
-
 import tensorflow as tf
 import tensorflow.keras.losses as kls
 
 
-def loss_actor_critic(_action_size, _entropy_coeff=0.0001):
+def loss_actor_critic(_action_size, _entropy_coeff=0.01):
     """
     Loss for actor-part of actor-critic algorithm: policy loss + entropy
     """
-    weighted_sparse_ce = kls.CategoricalCrossentropy(
+    cat_crosentropy = kls.CategoricalCrossentropy(
             from_logits=True)
     entropy_coeff = _entropy_coeff
     action_size = _action_size
@@ -19,7 +18,7 @@ def loss_actor_critic(_action_size, _entropy_coeff=0.0001):
         y_true = tf.one_hot(y_true, depth=action_size)
 
         # Execute categorical crossentropy
-        neglogp = weighted_sparse_ce(
+        neglogp = cat_crosentropy(
             y_true,  # True actions chosen
             y_pred,  # Logits from model
             # sample_weight=advs

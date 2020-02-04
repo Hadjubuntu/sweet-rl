@@ -16,6 +16,8 @@ class A2CCritic(Agent):
 
         Parameters
         ----------
+            ml_platform: sweet.interface.MLPlatform
+                Machine Learning platform (either TF2 or Torch)
             lr: float or sweet.common.schedule.Schedule
                 Learning rate
             input_shape: shape
