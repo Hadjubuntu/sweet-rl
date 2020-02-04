@@ -37,6 +37,8 @@ python -m sweet.run --env=CartPole-V0 --algo=dqn --ml=tf
 #  --algo ALGO    RL agent ('dqn', 'a2c')
 #  --ml ML        ML platform ('tf' or 'torch')
 #  --model MODEL  Model ('dense', 'conv')
+#  --output OUTPUT  Output directory (eg. './target/')
+
 ```
 
 ### Custom neural network
@@ -46,6 +48,7 @@ If you want to specify your own model instead of default ones, take a look to
 
 ## Features, algorithms implemented
 
+### Algorithms
 | Algorithm     | Implementation status |  ML platform  |
 | ------------- | -------------         | ------------- |
 | DQN | <g-emoji class="g-emoji" alias="heavy_check_mark" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/2714.png">✔️</g-emoji>  |  TF2, Torch |
@@ -53,6 +56,23 @@ If you want to specify your own model instead of default ones, take a look to
 | PPO           | Soon                  |               |
 
 
+### IO: Logs, model, tensorboard events
+Outputs are configurable in training function:
+```python
+targets: dict = {
+        'output_dir': Path('./target/'), # Main directory to store your outputs
+        'models_dir': 'models_checkpoints', # Saving models (depending on model_checkpoint_freq)
+        'logs_dir': 'logs', # Saving logs (info, debug, errors)
+        'tb_dir': 'tb_events' # Saving tensorboard events
+}
+```
+
+## Benchmark
+
+To reproduce benchmark, execute:
+```bash
+python -m sweet.benchmark.benchmark_runner
+```
 
 ## Troubleshootings
 

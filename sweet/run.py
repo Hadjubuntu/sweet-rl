@@ -4,6 +4,7 @@ import multiprocessing
 import os.path as osp
 import gym
 import numpy as np
+from pathlib import Path
 
 from sweet.agents.dqn.train import learn as dqn_train
 from sweet.agents.a2c.train import learn as a2c_train
@@ -81,6 +82,11 @@ def main(args):
         type=str,
         help="Model (dense, conv, ..)",
         default="dense")
+    parser.add_argument(
+        "--output",
+        type=str,
+        help="Output directory (eg. './target/')",
+        default="./target/")
     args = parser.parse_args()
 
     # Build variables from arguments
@@ -88,6 +94,7 @@ def main(args):
     agent_str = args.algo
     ml_platform_str = args.ml
     model_str = args.model
+    output_dir_str = args.output
 
     agent_train_func = make_agent_train_func(agent_str)
 
@@ -97,7 +104,14 @@ def main(args):
         env_name=env_str,
         model=model_str,
         total_timesteps=1e2,
-        lr=0.01)
+        lr=0.001,
+        targets={
+            'output_dir': Path(output_dir_str),
+            'models_dir': 'models_checkpoints',
+            'logs_dir': 'logs',
+            'tb_dir': 'tb_events'
+        }
+    )
 
 
 if __name__ == '__main__':

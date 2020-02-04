@@ -117,7 +117,6 @@ class TorchPlatform(MLPlatform):
         if not target_path.endswith('.pth'):
             target_path = f"{target_path}.pth"
 
-        # TODO fix this
         checkpoint = {'model': self.model,
                       'state_dict': self.model.state_dict(),
                       'optimizer': self.optimizer.state_dict()}
