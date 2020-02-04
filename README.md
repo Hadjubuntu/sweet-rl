@@ -75,7 +75,7 @@ python -m sweet.benchmark.benchmark_runner
 ```
 
 Here is an example of benchmark between TF 2.0 and Torch 1.4 with CartPole-v0 environment:  
-![Benchmark RL](https://raw.githubusercontent.com/Hadjubuntu/sweet-rl/develop/misc/benchmark-example.png)
+![Benchmark RL](https://raw.githubusercontent.com/Hadjubuntu/sweet-rl/develop/misc/bench-example.png)
 
 
 ## Troubleshootings
