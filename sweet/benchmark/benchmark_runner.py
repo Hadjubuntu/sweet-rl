@@ -55,8 +55,8 @@ def benchmark_runner():
                 ml_platform=ml_platform,
                 env_name=env_name,
                 model='dense',
-                total_timesteps=5e5,
-                lr=0.002,
+                total_timesteps=1e6,
+                lr=0.004,
                 targets={
                     'output_dir': run_target_dir / specific_run_target,
                     'models_dir': 'models_checkpoints',
@@ -69,9 +69,9 @@ def benchmark_runner():
                 ml_platform=ml_platform,
                 env_name=env_name,
                 model='dense',
-                total_timesteps=5e5,
-                lr_actor=0.002,
-                lr_critic=0.001,
+                total_timesteps=1e6,
+                lr_actor=0.004,
+                lr_critic=0.002,
                 targets={
                     'output_dir': run_target_dir / specific_run_target,
                     'models_dir': 'models_checkpoints',
