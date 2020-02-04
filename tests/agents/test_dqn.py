@@ -3,12 +3,10 @@ import logging
 import gym
 from sweet.agents.dqn.dqn_agent import DqnAgent
 from sweet.agents.dqn.train import learn
-from sweet.common.logging import init_logger
+from sweet.common.logging import Logger
 from sweet.envs.basic_env import BasicEnv
 
-
-init_logger(log_in_file=False)
-logger = logging.getLogger(__name__)
+logger = Logger(log_in_file=False)
 
 
 def test_dqn(env_name='basic-v0'):
