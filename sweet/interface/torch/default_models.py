@@ -9,9 +9,9 @@ class TorchDense(nn.Module):
         input_size_flatten = self.num_flat_features(state_shape)
 
         self.flatten = nn.Flatten(start_dim=1, end_dim=-1)
-        self.h1 = nn.Linear(input_size_flatten, 128)
-        self.h2 = nn.Linear(128, 128)
-        self.out = nn.Linear(128, action_size)
+        self.h1 = nn.Linear(input_size_flatten, 256)
+        self.h2 = nn.Linear(256, 256)
+        self.out = nn.Linear(256, action_size)
 
     def forward(self, x):
         x = self.flatten(x)
@@ -30,9 +30,17 @@ class TorchPiActorCritic(nn.Module):
         input_size_flatten = self.num_flat_features(state_shape)
 
         self.flatten = nn.Flatten(start_dim=1, end_dim=-1)
-        self.h1 = nn.Linear(input_size_flatten, 128)
-        self.out = nn.Linear(128, action_size)
-        self.out_value = nn.Linear(128, 1)
+        self.nb_features = 256
+
+        # Layers for action
+        self.ha1 = nn.Linear(input_size_flatten, self.nb_features)
+        self.ha2 = nn.Linear(self.nb_features, self.nb_features)
+        # Layers for value
+        self.hv1 = nn.Linear(input_size_flatten, self.nb_features)
+        self.hv2 = nn.Linear(self.nb_features, self.nb_features)
+
+        self.out = nn.Linear(self.nb_features, action_size)
+        self.out_value = nn.Linear(self.nb_features, 1)
 
     def forward(self, x):
         """
@@ -43,11 +51,16 @@ class TorchPiActorCritic(nn.Module):
         x2 = x[1]
 
         x = self.flatten(x1)
-        x = torch.relu(self.h1(x))
+
+        xa = torch.relu(self.ha1(x))
+        xa = torch.relu(self.ha2(xa))
+
+        xv = torch.relu(self.hv1(x))
+        xv = torch.relu(self.hv2(xa))
 
         # Outputs
-        logits = self.out(x)
-        value = self.out_value(x)
+        logits = self.out(xa)
+        value = self.out_value(xv)
 
         return [logits, x2, value]
 

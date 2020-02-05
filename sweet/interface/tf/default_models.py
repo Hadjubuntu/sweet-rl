@@ -25,8 +25,8 @@ def dense(input_shape, output_shape, output_activation='linear', name=None):
     x = Flatten()(inputs)
 
     # Create one dense layer and one layer for output
-    x = Dense(128, activation='tanh')(x)
-    x = Dense(128, activation='tanh')(x)
+    x = Dense(256, activation='tanh')(x)
+    x = Dense(256, activation='tanh')(x)
     
     predictions = Dense(output_shape, activation='linear')(x)
 
@@ -44,10 +44,15 @@ def pi_actor_critic(input_shape, output_shape):
     x = Flatten()(inputs)
 
     # Create one dense layer and one layer for output
-    x = Dense(128, activation='relu')(x)
+    nb_features = 256
+    xa = Dense(nb_features, activation='relu')(x)
+    xa = Dense(nb_features, activation='relu')(xa)
+
+    xv = Dense(nb_features, activation='tanh')(x)
+    xv = Dense(nb_features, activation='tanh')(xv)
     
-    logits = Dense(output_shape)(x)
-    value = Dense(1, activation='linear')(x)
+    logits = Dense(output_shape)(xa)
+    value = Dense(1, activation='linear')(xv)
 
     # Finally build model
     model = Model(

@@ -12,8 +12,8 @@ from sweet.run import make_agent_train_func, make_ml_platform
 
 def benchmark_runner():
     # Benchmark configuration
-    agents = ['a2c', 'dqn']
-    envs = ['CartPole-v0', 'LunarLander-v2']
+    agents = ['a2c']
+    envs = ['CartPole-v0', 'CartPole-v1'] # CartPole-v0, ..
     ml_platforms = ['tf', 'torch']
 
     # Create all configuration
@@ -50,36 +50,26 @@ def benchmark_runner():
         env_name = conf['env']
         specific_run_target = f"run_{env_name}_{conf['ml']}_{conf['agent']}"
 
-        if conf['agent'] == 'dqn':
-            agent_train_func(
-                ml_platform=ml_platform,
-                env_name=env_name,
-                model='dense',
-                total_timesteps=1e6,
-                lr=0.008,
-                targets={
-                    'output_dir': run_target_dir / specific_run_target,
-                    'models_dir': 'models_checkpoints',
-                    'logs_dir': 'logs',
-                    'tb_dir': 'tb_events'
-                }
-            )
-        else:  # TODO improve this if/else
-            agent_train_func(
-                ml_platform=ml_platform,
-                env_name=env_name,
-                model='dense',
-                total_timesteps=1e6,
-                lr_actor=0.0003,
-                lr_critic=0.0005,
-                nsteps=32,
-                targets={
-                    'output_dir': run_target_dir / specific_run_target,
-                    'models_dir': 'models_checkpoints',
-                    'logs_dir': 'logs',
-                    'tb_dir': 'tb_events'
-                }
-            )
+        # For DQN, we can use simple dense model
+        model_str = 'dense'
+
+        # For A2C, we use actor-critic model
+        if conf['agent'] == 'a2c':
+            model_str = 'pi_actor_critic'
+
+        agent_train_func(
+            ml_platform=ml_platform,
+            env_name=env_name,
+            model=model_str,
+            total_timesteps=5e5,
+            lr=0.00001,
+            targets={
+                'output_dir': run_target_dir / specific_run_target,
+                'models_dir': 'models_checkpoints',
+                'logs_dir': 'logs',
+                'tb_dir': 'tb_events'
+            }
+        )
 
 
 if __name__ == '__main__':
