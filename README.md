@@ -32,13 +32,14 @@ Run a DQN training:
 python -m sweet.run --env=CartPole-v0 --algo=dqn --ml=tf
 
 # Parameters:
-#  -h, --help     show this help message and exit
-#  --env ENV      Environment to play with (eg. 'CartPole-v0')
-#  --algo ALGO    RL agent ('dqn', 'a2c')
-#  --ml ML        ML platform ('tf' or 'torch')
-#  --model MODEL  Model ('dense', 'conv')
-#  --output OUTPUT  Output directory (eg. './target/')
-
+#   -h, --help            show this help message and exit
+#   --env ENV             Environment to play with
+#   --algo ALGO           RL agent
+#   --ml ML               ML platform (tf or torch)
+#   --model MODEL         Model (dense, pi_actor_critic)
+#   --timesteps TIMESTEPS
+#                         Number of training steps
+#   --output OUTPUT       Output directory (eg. './target/')
 ```
 
 ### Custom neural network
@@ -66,6 +67,7 @@ targets: dict = {
         'tb_dir': 'tb_events' # Saving tensorboard events
 }
 ```
+
 
 ## Benchmark
 
