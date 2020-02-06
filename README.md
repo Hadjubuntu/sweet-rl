@@ -7,7 +7,7 @@
 It exists dozens of Reinforcement Learning frameworks and algorithms implementations.
 Yet, most of them suffer of poor modularity and ease of understanding. This is why, I started to implement my own: Sweet-RL.
 It's so sweet that you can switch from Tensorflow 2.1 to PyTorch 1.4 with a single configuration line:  
-![Sweet-RL](https://raw.githubusercontent.com/Hadjubuntu/sweet-rl/agnostic-ml-platform/misc/ml-platform.png)
+![Sweet-RL](https://raw.githubusercontent.com/Hadjubuntu/sweet-rl/develop/misc/ml-platform.png)
 
 
 ## Getting started
