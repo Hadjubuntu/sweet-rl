@@ -55,8 +55,8 @@ class TorchPiActorCritic(nn.Module):
         xa = torch.relu(self.ha1(x))
         xa = torch.relu(self.ha2(xa))
 
-        xv = torch.relu(self.hv1(x))
-        xv = torch.relu(self.hv2(xa))
+        xv = torch.tanh(self.hv1(x))
+        xv = torch.tanh(self.hv2(xa))
 
         # Outputs
         logits = self.out(xa)

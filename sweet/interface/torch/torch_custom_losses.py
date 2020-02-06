@@ -3,7 +3,7 @@ import torch.nn as nn
 from torch.distributions import Categorical
 
 
-def loss_actor_critic(_coeff_vf=0.5, _entropy_coeff=0.01):
+def loss_actor_critic(_coeff_vf=0.5, _entropy_coeff=0.00001):
     """
     Loss for actor-part of actor-critic algorithm: policy loss + entropy
     """

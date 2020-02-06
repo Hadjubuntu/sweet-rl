@@ -14,9 +14,9 @@ def benchmark_runner():
     # Benchmark configuration
     agents = ['a2c']
     envs = ['CartPole-v0', 'CartPole-v1'] # CartPole-v0, ..
-    ml_platforms = ['tf', 'torch']
+    ml_platforms = ['torch', 'tf']
 
-    # Create all configuration
+    # Create all configurations
     benchmark_combinations = list(it.product(
         envs,
         ml_platforms,
@@ -62,7 +62,7 @@ def benchmark_runner():
             env_name=env_name,
             model=model_str,
             total_timesteps=5e5,
-            lr=0.00001,
+            lr=0.0001,
             targets={
                 'output_dir': run_target_dir / specific_run_target,
                 'models_dir': 'models_checkpoints',

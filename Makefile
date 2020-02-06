@@ -29,3 +29,6 @@ dist:
 	# Distribute package to pypi.org/project/sweet-rl/
 	python setup.py sdist
 	twine upload dist/*
+
+coverage:
+	pytest --cov=sweet tests/

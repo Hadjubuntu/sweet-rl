@@ -23,7 +23,8 @@ setup(
         'gym==0.15.4',
         'pandas==0.25.3',
         'pytest==5.2.2',
-        'matplotlib==3.1.2'],
+        'matplotlib==3.1.2',
+        'pytest-cov==2.8.1'],
     long_description=long_description,
     long_description_content_type='text/markdown',
 )

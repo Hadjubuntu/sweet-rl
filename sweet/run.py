@@ -11,9 +11,8 @@ from sweet.agents.a2c.train import learn as a2c_train
 
 from sweet.interface.tf.tf_platform import TFPlatform
 from sweet.interface.torch.torch_platform import TorchPlatform
+from sweet.common.logging import Logger
 
-
-import logging
 import argparse
 
 __author__ = "Adrien HADJ-SALAH"
@@ -51,14 +50,38 @@ def make_ml_platform(ml_platform_str):
         raise NotImplementedError(f'Unknow ML platform: {ml_platform_str}')
 
 
-def main(args):
+def run(
+    agent_str, ml_platform_str, env_str, model_str, timesteps, output_dir_str
+):
     """
     Create RL agent and launch training phase
     """
+    # Quick-fix for A2C, force model to be compatible with I/O:
+    if agent_str == 'a2c':
+        model_str = 'pi_actor_critic'
+
+    # Create RL agent
+    agent_train_func = make_agent_train_func(agent_str)
+
+    # Execute agent training
+    agent_train_func(
+        ml_platform=make_ml_platform(ml_platform_str),
+        env_name=env_str,
+        model=model_str,
+        total_timesteps=timesteps,
+        lr=0.001,
+        targets={
+            'output_dir': Path(output_dir_str),
+            'models_dir': 'models_checkpoints',
+            'logs_dir': 'logs',
+            'tb_dir': 'tb_events'
+        }
+    )
+
+
+def parse_arguments():
     # Initialize logger
-    logging.basicConfig(
-        format='%(levelname)s:%(message)s',
-        level=logging.DEBUG)
+    logger = Logger("sweet-run", log_in_file=False)
 
     # Parse arguments
     parser = argparse.ArgumentParser()
@@ -80,8 +103,13 @@ def main(args):
     parser.add_argument(
         "--model",
         type=str,
-        help="Model (dense, conv, ..)",
+        help="Model (dense, pi_actor_critic)",
         default="dense")
+    parser.add_argument(
+        "--timesteps",
+        type=int,
+        help="Number of training steps",
+        default=int(1e2))
     parser.add_argument(
         "--output",
         type=str,
@@ -94,25 +122,19 @@ def main(args):
     agent_str = args.algo
     ml_platform_str = args.ml
     model_str = args.model
+    timesteps = int(args.timesteps)
     output_dir_str = args.output
 
-    agent_train_func = make_agent_train_func(agent_str)
-
-    # Execute agent training
-    agent_train_func(
-        ml_platform=make_ml_platform(ml_platform_str),
-        env_name=env_str,
-        model=model_str,
-        total_timesteps=1e2,
-        lr=0.001,
-        targets={
-            'output_dir': Path(output_dir_str),
-            'models_dir': 'models_checkpoints',
-            'logs_dir': 'logs',
-            'tb_dir': 'tb_events'
-        }
+    return (
+        agent_str,
+        ml_platform_str,
+        env_str,
+        model_str,
+        timesteps,
+        output_dir_str
     )
 
 
 if __name__ == '__main__':
-    main(sys.argv)
+    arguments = parse_arguments()
+    run(*arguments)
