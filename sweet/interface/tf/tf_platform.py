@@ -9,12 +9,21 @@ from tensorflow.keras.metrics import Mean
 
 
 class TFPlatform(MLPlatform):
-    def __init__(self, model, loss, optimizer, lr, state_shape, action_size):
+    def __init__(
+        self,
+        model,
+        loss,
+        optimizer,
+        lr,
+        state_shape,
+        action_size,
+        **kwargs
+    ):
         """
         Initialize tensorflow platform
         """
         super().__init__('tensorflow')
-        self.loss = self._build_loss(loss, action_size)
+        self.loss = self._build_loss(loss, action_size, **kwargs)
         self.optimizer = self._build_optimizer(optimizer, lr)
         self.model = self._build_model(model, state_shape, action_size)
         self.eval_loss = Mean('loss')
@@ -65,13 +74,18 @@ class TFPlatform(MLPlatform):
 
         return self.eval_loss(loss)
 
-    def _build_loss(self, loss: str, action_size: int):
+    def _build_loss(self, loss: str, action_size: int, **kwargs):
         loss_out = None
 
         if loss == 'mean_squared_error' or loss == 'mse':
             loss_out = kl.MeanSquaredError()
         elif loss == 'actor_categorical_crossentropy':
-            loss_out = loss_actor_critic(action_size)
+            coeff_vf = kwargs.get('coeff_vf', 0.5)
+            coeff_entropy = kwargs.get('coeff_entropy', 0.001)
+
+            loss_out = loss_actor_critic(
+                action_size, _coeff_vf=coeff_vf, _coeff_entropy=coeff_entropy
+            )
         else:
             raise NotImplementedError(f'Unknow loss in TF-platform: {loss}')
 

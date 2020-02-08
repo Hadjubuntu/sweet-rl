@@ -2,15 +2,15 @@ import tensorflow as tf
 import tensorflow.keras.losses as kls
 
 
-def loss_actor_critic(_action_size,  _coeff_vf=0.5, _entropy_coeff=0.00001):
+def loss_actor_critic(_action_size,  _coeff_vf=0.5, _coeff_entropy=0.001):
     """
     Loss for actor-part of actor-critic algorithm: policy loss + entropy
     """
     cat_crosentropy = kls.CategoricalCrossentropy(
             from_logits=True)
-    entropy_coeff = _entropy_coeff
     action_size = _action_size
     coeff_vf = _coeff_vf
+    coeff_entropy = _coeff_entropy
 
     def pi_loss(y_true, m_out):
         y_pred, advs, vf = m_out[0], m_out[1], m_out[2]
@@ -40,7 +40,7 @@ def loss_actor_critic(_action_size,  _coeff_vf=0.5, _entropy_coeff=0.00001):
 
         loss_vf = kls.mean_squared_error(vf, vf_true)
 
-        return policy_loss - entropy_coeff * entropy_loss + coeff_vf * loss_vf
+        return policy_loss - coeff_entropy * entropy_loss + coeff_vf * loss_vf
 
     # Return a function
     return pi_loss

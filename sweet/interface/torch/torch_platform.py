@@ -10,15 +10,23 @@ import torch.nn.functional as F
 
 
 class TorchPlatform(MLPlatform):
-    def __init__(self, model, loss, optimizer, lr, state_shape, action_size):
+    def __init__(
+        self,
+        model,
+        loss,
+        optimizer,
+        lr,
+        state_shape,
+        action_size,
+        **kwargs
+    ):
         """
         Initialize Torch platform
         """
         super().__init__('torch')
         self.model = self._build_model(model, state_shape, action_size)
-        self.loss = self._build_loss(loss)
+        self.loss = self._build_loss(loss, **kwargs)
         self.optimizer = self._build_optimizer(optimizer, lr)
-        
 
     def sample(self, logits):
         """
@@ -34,14 +42,7 @@ class TorchPlatform(MLPlatform):
         """
         Model prediction against observation x
         """
-        if isinstance(x, list):
-            tensors = []
-            for element in x:
-                tensors.append(torch.tensor(element))
-
-            x = tensors
-        else:
-            x = torch.tensor(x)
+        x = self._to_tensor(x)
 
         raw_output = self.model(x)
 
@@ -58,18 +59,12 @@ class TorchPlatform(MLPlatform):
 
     def fast_apply_gradients(self, x, y):
         """
-        s
+        Apply gradient
         """
-        if isinstance(x, list):
-            res = []
-            for element in x:
-                res.append(torch.tensor(element))
-            x = res
-        else:
-            x = torch.tensor(x)
+        x = self._to_tensor(x)
+        y = self._to_tensor(y)
+            
         y_pred = self.model(x)
-        y = torch.tensor(y).float()
-
         loss = self.loss(y_pred, y)
 
         self.optimizer.zero_grad()
@@ -78,13 +73,32 @@ class TorchPlatform(MLPlatform):
 
         return loss
 
-    def _build_loss(self, loss: str):
+    def _to_tensor(self, x):
+        """
+        Transform numpy array into tensor
+        or list of np.array to list of tensors
+        """
+        if isinstance(x, list):
+            res = []
+            for element in x:
+                res.append(torch.tensor(element).float())
+            x = res
+        else:
+            x = torch.tensor(x).float()
+        return x
+
+    def _build_loss(self, loss: str, **kwargs):
         loss_out = None
 
         if loss == 'mean_squared_error' or loss == 'mse':
             loss_out = nn.MSELoss()
         elif loss == 'actor_categorical_crossentropy':
-            loss_out = loss_actor_critic()
+            coeff_vf = kwargs.get('coeff_vf', 0.5)
+            coeff_entropy = kwargs.get('coeff_entropy', 0.001)
+
+            loss_out = loss_actor_critic(
+                _coeff_vf=coeff_vf, _coeff_entropy=coeff_entropy
+            )
         else:
             raise NotImplementedError(f'Loss not implemented so far: {loss}')
 

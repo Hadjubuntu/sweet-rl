@@ -17,12 +17,12 @@ from sweet.common.utils import now_str
 
 def learn(
     ml_platform=TorchPlatform,
-    env_name='BreakoutNoFrameskip-v4',
+    env_name='CartPole-v1',
     model='pi_actor_critic',
     total_timesteps=1e7,
     nenvs=1,
     nsteps=32,
-    lr=0.002,
+    lr=0.001,
     coeff_critic=0.5,
     gamma: float = 0.95,
     model_checkpoint_freq: int = 1e5,

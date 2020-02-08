@@ -19,7 +19,8 @@ class Agent(ABC):
             state_shape,
             action_size,
             optimizer: str = 'adam',
-            loss: str = 'mean_squared_error'):
+            loss: str = 'mean_squared_error',
+            **kwargs):
         """
         Generic initialization of RL algorithm
         """
@@ -38,7 +39,8 @@ class Agent(ABC):
             optimizer,
             self.lr,
             state_shape,
-            action_size
+            action_size,
+            **kwargs
         )
 
     def sample(self, logits):

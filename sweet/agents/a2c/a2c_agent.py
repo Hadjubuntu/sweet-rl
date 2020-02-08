@@ -26,6 +26,9 @@ class A2CAgent(Agent):
             Learning rate for Actor (Policy)
         coeff_critic: float
             Ratio of critic loss compared to policy loss
+        coeff_entropy: float
+            Entropy factor relative to loss function
+            (pg_loss + entropy_loss + value_loss)
         gamma: float
             Discount factor
     """
@@ -36,14 +39,16 @@ class A2CAgent(Agent):
                  action_size,
                  model='pi_actor_critic',
                  lr=0.003,
-                 coeff_critic=0.5,
-                 gamma: float = 0.95,
+                 coeff_critic: float=0.5,
+                 coeff_entropy: float=0.001,
+                 gamma: float=0.95,
                  optimizer='adam',
                  loss='actor_categorical_crossentropy'):
         # Generic initialization
         super().__init__(
             ml_platform, lr, model, state_shape, action_size,
-            optimizer=optimizer, loss=loss
+            optimizer=optimizer, loss=loss,
+            kwargs={'coeff_vf': coeff_critic, 'coeff_entropy': coeff_entropy}
         )
 
         # Input/output shapes
@@ -111,7 +116,7 @@ class A2CAgent(Agent):
         x = [obs, advs]
         y = [actions, discounted_reward]
         loss_pi = self.fast_apply_gradients(x, y)
-        
+
         # TODO retrieve loss actor and critic
 
         return loss_pi

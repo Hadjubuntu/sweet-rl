@@ -3,14 +3,14 @@ import torch.nn as nn
 from torch.distributions import Categorical
 
 
-def loss_actor_critic(_coeff_vf=0.5, _entropy_coeff=0.00001):
+def loss_actor_critic(_coeff_vf=0.5, _coeff_entropy=0.001):
     """
     Loss for actor-part of actor-critic algorithm: policy loss + entropy
     """
     cross_entrop = nn.CrossEntropyLoss()
     mse = nn.MSELoss()
-    entropy_coeff = _entropy_coeff
     coeff_vf = _coeff_vf
+    coeff_entropy = _coeff_entropy
 
     # TODO why its different order than TF ???
     def pi_loss(m_out, y_true):
@@ -18,11 +18,6 @@ def loss_actor_critic(_coeff_vf=0.5, _entropy_coeff=0.00001):
 
         y_true_action = y_true[0].long()
         vf_true = y_true[1]
-
-        # print(f"Dimension ==========+> {y_true.size()}")
-        # print(f"y_true={y_true.size()}")
-        # print(f"y_pred={y_pred.size()}")
-        # print(f"advs={advs.size()}")
 
         # Execute categorical crossentropy
         neglogp = cross_entrop(
@@ -37,7 +32,7 @@ def loss_actor_critic(_coeff_vf=0.5, _entropy_coeff=0.00001):
 
         loss_vf = mse(vf, vf_true)
 
-        return policy_loss - entropy_coeff * entropy_loss + coeff_vf * loss_vf
+        return policy_loss - coeff_entropy * entropy_loss + coeff_vf * loss_vf
 
     # Return a function
     return pi_loss
