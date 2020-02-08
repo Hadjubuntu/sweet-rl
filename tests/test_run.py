@@ -1,10 +1,10 @@
 from sweet.run import run
 import itertools as it
-
+from pathlib import Path
 
 def test_run():
     # Only few steps for test
-    timesteps = 10
+    timesteps = 128
 
     # Compute all sub testing conf
     envs = ['CartPole-v0']
@@ -28,3 +28,5 @@ def test_run():
             'dense',
             timesteps,
             './target/')
+
+

@@ -7,8 +7,19 @@ services:
 
 install:
     - pip install flake8
+    - pip install codecov
     - docker build . -t sweet-rl-test
 
 script:
     # Not ready yet :) - flake8 . --show-source --statistics
     - docker run -e RUNSLOW=1 sweet-rl-test pytest -v .
+    - docker run -e RUNSLOW=1 sweet-rl-test bash <(curl -s https://codecov.io/bash)
+
+
+    install:
+# Run the unit test
+script:
+
+# Push the results back to codecov
+after_success:
+  - codecov

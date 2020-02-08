@@ -67,9 +67,9 @@ targets: dict = {
         'tb_dir': 'tb_events' # Saving tensorboard events
 }
 ```
+Model are saved depending on `model_checkpoint_freq` parameter set in train function.
 
-
-## Benchmark
+## Benchmark
 
 To reproduce benchmark, execute:
 ```bash
