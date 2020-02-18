@@ -106,7 +106,7 @@ class A2CAgent(Agent):
 
         # Compute advantage / TD-error A(s,a)=Q(s,a)-V(s) (Note advantages is
         # an array of dim (nbatch, nactions))
-        advs = np.zeros((len(obs), 1))       
+        advs = np.zeros((len(obs), 1))
         V = self.fast_predict([obs, advs])[2]
 
         advs[:] = discounted_reward - V

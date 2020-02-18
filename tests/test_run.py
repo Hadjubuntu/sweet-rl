@@ -2,7 +2,12 @@ from sweet.run import run
 import itertools as it
 from pathlib import Path
 
+
 def test_run():
+    """
+    Run few steps with algorithms and ML platforms to prevent
+    from overall code regression
+    """
     # Only few steps for test
     timesteps = 128
 
