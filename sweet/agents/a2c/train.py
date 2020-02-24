@@ -94,7 +94,7 @@ def learn(
         model=model,
         lr=lr,
         coeff_critic=coeff_critic,
-        gamma=0.95
+        gamma=gamma,
     )
 
     nbatch = nenvs * nsteps

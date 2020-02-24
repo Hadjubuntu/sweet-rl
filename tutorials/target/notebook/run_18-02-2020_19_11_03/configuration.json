@@ -1,0 +1,18 @@
+{
+    "logger": "<sweet.common.logging.Logger object at 0x7fc470419438>",
+    "models_dir": "target/notebook/run_18-02-2020_19_11_03/models_checkpoints",
+    "run_target_dir": "target/notebook/run_18-02-2020_19_11_03",
+    "targets": "{'output_dir': PosixPath('target/notebook'), 'models_dir': 'models_checkpoints', 'logs_dir': 'logs', 'tb_dir': 'tb_events'}",
+    "log_interval": "1",
+    "model_checkpoint_freq": "100000.0",
+    "replay_buffer": "2000",
+    "epsilon_decay": "0.995",
+    "epsilon_min": "0.01",
+    "epsilon": "1.0",
+    "gamma": "0.95",
+    "lr": "0.0003",
+    "total_timesteps": "1000.0",
+    "model": "<tensorflow.python.keras.engine.training.Model object at 0x7fc470485d30>",
+    "env_name": "CartPole-v0",
+    "ml_platform": "<class 'sweet.interface.tf.tf_platform.TFPlatform'>"
+}

@@ -24,7 +24,8 @@ setup(
         'pandas==0.25.3',
         'pytest==5.2.2',
         'matplotlib==3.1.2',
-        'pytest-cov==2.8.1'],
+        'pytest-cov==2.8.1',
+        'jupyter==1.0.0'],
     long_description=long_description,
     long_description_content_type='text/markdown',
 )
