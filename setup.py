@@ -8,7 +8,7 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='sweet-rl',
-    version='0.0.1rc1',
+    version='0.1',
     url='https://github.com/Hadjubuntu/sweet-rl',
     author='Adrien Hadj-Salah',
     author_email='adrien.hadj.salah@gmail.com',
