@@ -51,10 +51,6 @@ class A2CAgent(Agent):
             kwargs={'coeff_vf': coeff_critic, 'coeff_entropy': coeff_entropy}
         )
 
-        # Input/output shapes
-        self.state_shape = state_shape
-        self.action_size = action_size
-
         # Hyperparameters
         self.gamma = gamma
 
