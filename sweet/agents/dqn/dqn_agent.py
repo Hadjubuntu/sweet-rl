@@ -91,6 +91,7 @@ class DqnAgent(Agent):
         obs = self.encode(obs)
         q_values = self.fast_predict(obs)
 
+        # TODO improve exploration by using distribution
         if np.random.rand() <= self.eps:
             a = np.random.randint(low=0, high=self.action_size)
         else:
