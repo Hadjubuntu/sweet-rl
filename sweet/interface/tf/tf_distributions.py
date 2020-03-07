@@ -39,21 +39,21 @@ class TFCategoricalDist(TFDistribution):
     def __init__(self, n_cat):
         super().__init__()
         self.n_cat = n_cat
+        self.cross_entrop = kls.CategoricalCrossentropy(
+            from_logits=True)
 
     def pd_from_latent(self, x_latent):
         logits = Dense(self.n_cat)(x_latent)
         return logits
 
     def neglogp(self, x_true, x):
-        return kls.CategoricalCrossentropy(
-            from_logits=True)(x_true, x)
+        return self.cross_entrop(x_true, x)
 
     def n(self):
         return self.n_cat
 
     def entropy(self, x):
-        return kls.CategoricalCrossentropy(
-            from_logits=True)(x, x)
+        return self.cross_entrop(x, x)
 
     def sample(self, logits):
         # Sample distribution from logits

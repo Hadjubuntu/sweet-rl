@@ -45,7 +45,6 @@ class TorchPlatform(MLPlatform):
         self.loss = self._build_loss(loss, **kwargs)
         self.optimizer = self._build_optimizer(optimizer, lr)
 
-   
     def fast_predict(self, x):
         """
         Model prediction against observation x
@@ -105,7 +104,9 @@ class TorchPlatform(MLPlatform):
             coeff_entropy = kwargs.get('coeff_entropy', 0.001)
 
             loss_out = loss_actor_critic(
-                _coeff_vf=coeff_vf, _coeff_entropy=coeff_entropy
+                _dist=self.distribution,
+                _coeff_vf=coeff_vf,
+                _coeff_entropy=coeff_entropy
             )
         else:
             raise NotImplementedError(f'Loss not implemented so far: {loss}')

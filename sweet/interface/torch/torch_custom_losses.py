@@ -3,11 +3,13 @@ import torch.nn as nn
 from torch.distributions import Categorical
 
 
-def loss_actor_critic(_coeff_vf=0.5, _coeff_entropy=0.001):
+def loss_actor_critic(_dist, _coeff_vf=0.5, _coeff_entropy=0.001):
     """
     Loss for actor-part of actor-critic algorithm: policy loss + entropy
     """
-    cross_entrop = nn.CrossEntropyLoss()
+    dist = _dist
+
+    # cross_entrop = nn.CrossEntropyLoss()
     mse = nn.MSELoss()
     coeff_vf = _coeff_vf
     coeff_entropy = _coeff_entropy
@@ -20,15 +22,14 @@ def loss_actor_critic(_coeff_vf=0.5, _coeff_entropy=0.001):
         vf_true = y_true[1]
 
         # Execute categorical crossentropy
-        neglogp = cross_entrop(
+        neglogp = dist.neglogp(
             y_pred,  # Logits from model
             y_true_action,  # True actions chosen
             # sample_weight=advs
         )
         policy_loss = (advs * neglogp).mean()
 
-        cat = Categorical(y_pred)
-        entropy_loss = cat.entropy().mean()
+        entropy_loss = dist.entropy(y_pred).mean()
 
         loss_vf = mse(vf, vf_true)
 

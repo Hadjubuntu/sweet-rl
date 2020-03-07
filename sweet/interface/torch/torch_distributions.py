@@ -3,6 +3,8 @@ import torch
 import torch.nn.functional as F
 import torch.distributions.categorical as cat
 import torch.nn as nn
+from torch.distributions import Categorical
+
 
 class TorchDistribution:
     """
@@ -36,6 +38,7 @@ class TorchCategoricalDist(TorchDistribution):
     def __init__(self, n_cat):
         super().__init__()
         self.n_cat = n_cat
+        self.cross_entrop = nn.CrossEntropyLoss()
 
     def sample(self, logits):
         """
@@ -49,6 +52,13 @@ class TorchCategoricalDist(TorchDistribution):
 
     def pd_from_latent(self, x, prev_size):
         return nn.Linear(prev_size, self.n_cat)(x)
+
+    def neglogp(self, x_true, x):
+        return self.cross_entrop(x_true, x)
+
+    def entropy(self, x):
+        cat = Categorical(x)
+        return cat.entropy()
 
 
 class TorchDiagGaussianDist(TorchDistribution):
