@@ -50,8 +50,8 @@ class TorchCategoricalDist(TorchDistribution):
 
         return m.sample()
 
-    def pd_from_latent(self, x, prev_size):
-        return nn.Linear(prev_size, self.n_cat)(x)
+    def pd_from_latent(self, prev_size):
+        return nn.Linear(prev_size, self.n_cat)
 
     def neglogp(self, x_true, x):
         return self.cross_entrop(x_true, x)
@@ -59,6 +59,9 @@ class TorchCategoricalDist(TorchDistribution):
     def entropy(self, x):
         cat = Categorical(x)
         return cat.entropy()
+
+    def n(self):
+        return self.n_cat
 
 
 class TorchDiagGaussianDist(TorchDistribution):
