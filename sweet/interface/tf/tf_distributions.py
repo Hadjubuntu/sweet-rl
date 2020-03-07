@@ -1,9 +1,11 @@
 from abc import ABC, abstractmethod
 
+import tensorflow as tf
 from tensorflow.keras.layers import (
     Dense, Conv2D, Input, LSTM, Embedding, Dropout, Activation, Flatten
 )
 import tensorflow.keras.losses as kls
+
 
 class TFDistribution:
     """
@@ -50,8 +52,12 @@ class TFCategoricalDist(TFDistribution):
         return self.n_cat
 
     def entropy(self, x):
-        return  kls.CategoricalCrossentropy(
+        return kls.CategoricalCrossentropy(
             from_logits=True)(x, x)
+
+    def sample(self, logits):
+        # Sample distribution from logits
+        return tf.squeeze(tf.random.categorical(logits, 1), axis=-1)
 
 
 class TFDiagGaussianDist(TFDistribution):

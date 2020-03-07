@@ -46,12 +46,6 @@ class TFPlatform(MLPlatform):
         # Loss evaluator
         self.eval_loss = Mean('loss')
 
-    def sample(self, logits):
-        """
-        Sample distribution
-        """
-        return tf.squeeze(tf.random.categorical(logits, 1), axis=-1)
-
     @tf.function
     def _graph_predict(self, x):
         return self.model(x)

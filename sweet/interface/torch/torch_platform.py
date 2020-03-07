@@ -1,12 +1,17 @@
 from sweet.interface.ml_platform import MLPlatform
 from sweet.interface.torch.default_models import str_to_model
 from sweet.interface.torch.torch_custom_losses import loss_actor_critic
+from sweet.interface.torch.torch_distributions import (
+    TorchDistribution, TorchCategoricalDist, TorchDiagGaussianDist
+)
 
 import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.distributions.categorical as cat
 import torch.nn.functional as F
+
+import gym
 
 
 class TorchPlatform(MLPlatform):
@@ -25,22 +30,22 @@ class TorchPlatform(MLPlatform):
         """
         super().__init__('torch')
 
+        self.action_space = action_space
+
+        # Temporary
+        # Only dicrete action so far
         action_size = action_space.n  # Only dicrete action so far
 
-        self.model = self._build_model(model, state_shape, action_size)
+
+        # Depending on action space, build distribution
+        self.distribution = self._build_distribution(self.action_space)
+
+        # Construit model, loss, optimizer
+        self.model = self._build_model(model, state_shape, self.distribution)
         self.loss = self._build_loss(loss, **kwargs)
         self.optimizer = self._build_optimizer(optimizer, lr)
 
-    def sample(self, logits):
-        """
-        Sample distribution
-        """
-        logits_tensor = torch.tensor(logits)
-        logits_tensor_soft = F.softmax(logits_tensor, dim=-1)
-        m = cat.Categorical(logits_tensor_soft)
-
-        return m.sample()
-
+   
     def fast_predict(self, x):
         """
         Model prediction against observation x
@@ -116,7 +121,7 @@ class TorchPlatform(MLPlatform):
 
         return optimizer_out
 
-    def _build_model(self, model='dense', state_shape=None, action_shape=None):
+    def _build_model(self, model='dense', state_shape=None, dist=None):
         """
         """
         model_output = model
@@ -125,10 +130,34 @@ class TorchPlatform(MLPlatform):
             model_output = str_to_model(
                 model,
                 input_shape=state_shape,
-                output_shape=action_shape
+                dist=dist
             )
 
         return model_output
+
+    def _build_distribution(self, action_space):
+        """
+        Build distribution from action space
+        
+        Parameters
+        ----------
+            action_space: gym.spaces.Space
+                Action space
+        Returns
+        -------
+            distribution: sweet.interface.tf.tf_distributions.TFDistribution
+                Output distribution
+        """
+        if isinstance(action_space, gym.spaces.Discrete):
+            return TorchCategoricalDist(n_cat=action_space.n)
+        elif isinstance(action_space, gym.spaces.Box):
+            raise NotImplementedError(
+                "Distribution for Box action space not implemented")
+        else:
+            raise NotImplementedError((
+                f"Distribution for {type(action_space)}"
+                "action space not implemented"
+            ))   
 
     def save(self, target_path):
         if not target_path.endswith('.pth'):

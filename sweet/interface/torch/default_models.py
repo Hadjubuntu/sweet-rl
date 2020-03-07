@@ -4,20 +4,21 @@ import torch.nn as nn
 
 
 class TorchDense(nn.Module):
-    def __init__(self, state_shape, action_size: int):
-        super(TorchDense, self).__init__()
+    def __init__(self, state_shape, dist):
+        super(TorchDense, self).__init__()        
+        self.dist = dist
+
         input_size_flatten = self.num_flat_features(state_shape)
 
         self.flatten = nn.Flatten(start_dim=1, end_dim=-1)
         self.h1 = nn.Linear(input_size_flatten, 256)
         self.h2 = nn.Linear(256, 256)
-        self.out = nn.Linear(256, action_size)
 
     def forward(self, x):
         x = self.flatten(x)
         x = torch.tanh(self.h1(x))
         x = torch.tanh(self.h2(x))
-        x = self.out(x)
+        x = self.dist.pd_from_latent(x, prev_size=256)
         return x
 
     def num_flat_features(self, x):
@@ -25,8 +26,10 @@ class TorchDense(nn.Module):
 
 
 class TorchPiActorCritic(nn.Module):
-    def __init__(self, state_shape, action_size: int):
+    def __init__(self, state_shape, dist):
         super(TorchPiActorCritic, self).__init__()
+        self.dist = dist
+
         input_size_flatten = self.num_flat_features(state_shape)
 
         self.flatten = nn.Flatten(start_dim=1, end_dim=-1)
@@ -39,7 +42,6 @@ class TorchPiActorCritic(nn.Module):
         self.hv1 = nn.Linear(input_size_flatten, self.nb_features)
         self.hv2 = nn.Linear(self.nb_features, self.nb_features)
 
-        self.out = nn.Linear(self.nb_features, action_size)
         self.out_value = nn.Linear(self.nb_features, 1)
 
     def forward(self, x):
@@ -59,7 +61,7 @@ class TorchPiActorCritic(nn.Module):
         xv = torch.tanh(self.hv2(xa))
 
         # Outputs
-        logits = self.out(xa)
+        logits = self.dist.pd_from_latent(xa, prev_size=self.nb_features)
         value = self.out_value(xv)
 
         return [logits, x2, value]
@@ -68,7 +70,7 @@ class TorchPiActorCritic(nn.Module):
         return np.prod(x)
 
 
-def str_to_model(model_str: str, input_shape, output_shape, n_layers=1):
+def str_to_model(model_str: str, input_shape, dist, n_layers=1):
     """
     Build model from string:
 
@@ -76,8 +78,8 @@ def str_to_model(model_str: str, input_shape, output_shape, n_layers=1):
     'conv': Convolutionnal neural network
     """
     if model_str == 'dense':
-        return TorchDense(input_shape, output_shape)
+        return TorchDense(input_shape, dist)
     elif model_str == 'pi_actor_critic':
-        return TorchPiActorCritic(input_shape, output_shape)
+        return TorchPiActorCritic(input_shape, dist)
     else:
         raise NotImplementedError(f"Unknow model: {model_str}")

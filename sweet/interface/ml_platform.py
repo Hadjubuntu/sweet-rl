@@ -11,12 +11,6 @@ class MLPlatform(ABC):
         self.name = name
 
     @abstractmethod
-    def sample(self, logits):
-        """
-        Sample values from probability distribution
-        """
-
-    @abstractmethod
     def fast_predict(self, x):
         """
         Model prediction from observation x

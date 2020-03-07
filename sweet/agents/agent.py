@@ -47,7 +47,7 @@ class Agent(ABC):
         """
         Sample distribution
         """
-        return self.ml_platform.sample(logits)
+        return self.ml_platform.distribution.sample(logits)
 
     def encode(self, var):
         """
