@@ -2,13 +2,11 @@ import tensorflow as tf
 import tensorflow.keras.losses as kls
 
 
-def loss_actor_critic(_action_size,  _coeff_vf=0.5, _coeff_entropy=0.001):
+def loss_actor_critic(_dist,  _coeff_vf=0.5, _coeff_entropy=0.001):
     """
     Loss for actor-part of actor-critic algorithm: policy loss + entropy
     """
-    cat_crosentropy = kls.CategoricalCrossentropy(
-            from_logits=True)
-    action_size = _action_size
+    dist = _dist
     coeff_vf = _coeff_vf
     coeff_entropy = _coeff_entropy
 
@@ -23,20 +21,17 @@ def loss_actor_critic(_action_size,  _coeff_vf=0.5, _coeff_entropy=0.001):
             tf.cast(y_true_action, tf.int32),
             axis=1
         )
-        y_true_action = tf.one_hot(y_true_action, depth=action_size)
+        y_true_action = tf.one_hot(y_true_action, depth=dist.n())
 
-        # Execute categorical crossentropy
-        neglogp = cat_crosentropy(
+        # Compute negative log-likelihood of logits
+        neglogp = dist.neglogp(
             y_true_action,  # True actions chosen
             y_pred,  # Logits from model
             # sample_weight=advs
         )
         policy_loss = tf.reduce_mean(advs * neglogp)
 
-        entropy_loss = kls.categorical_crossentropy(
-            y_pred, y_pred,
-            from_logits=True
-        )
+        entropy_loss = dist.entropy(y_pred)
 
         loss_vf = kls.mean_squared_error(vf, vf_true)
 

@@ -16,7 +16,7 @@ from sweet.common.utils import now_str
 
 
 def learn(
-    ml_platform=TorchPlatform,
+    ml_platform=TFPlatform,
     env_name='CartPole-v1',
     model='pi_actor_critic',
     total_timesteps=1e7,

@@ -18,7 +18,7 @@ class A2CAgent(Agent):
             Torch = sweet.interface.tf.tf_platform.TorchPlatform
         state_shape: shape
             Observation state shape
-        action_space: gym.spaces
+        action_space: gym.spaces.Space
             Action space
             (gym.spaces.Discrete for discrete action, gym.spaces.Box for continuous action space)
         model: Model or str

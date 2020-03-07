@@ -26,7 +26,7 @@ class DqnAgent(Agent):
             Torch = sweet.interface.tf.tf_platform.TorchPlatform
         state_shape: shape
             Observation state shape
-        action_space: gym.spaces
+        action_space: gym.spaces.Space
             Action space
             (gym.spaces.Discrete for discrete action, gym.spaces.Box for continuous action space)
         model: Model or str
@@ -62,7 +62,7 @@ class DqnAgent(Agent):
         # Generic initialization
         super().__init__(ml_platform, lr, model, state_shape, action_space)
 
-        assert type(action_space) == Discrete, "Only discrete action for DQN so far"
+        assert isinstance(action_space, Discrete), "Only discrete action for DQN so far"
         self.action_size = action_space.n
 
         # Hyperparameters

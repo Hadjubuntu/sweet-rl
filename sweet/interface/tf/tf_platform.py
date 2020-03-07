@@ -1,11 +1,16 @@
 from sweet.interface.ml_platform import MLPlatform
 from sweet.interface.tf.default_models import str_to_model
 from sweet.interface.tf.tf_custom_losses import loss_actor_critic
+from sweet.interface.tf.tf_distributions import (
+    TFDistribution, TFCategoricalDist, TFDiagGaussianDist
+)
 
 import tensorflow as tf
 import tensorflow.keras.losses as kl
 import tensorflow.keras.optimizers as ko
 from tensorflow.keras.metrics import Mean
+
+import gym
 
 
 class TFPlatform(MLPlatform):
@@ -24,11 +29,21 @@ class TFPlatform(MLPlatform):
         """
         super().__init__('tensorflow')
 
-        action_size = action_space.n  # Only dicrete action so far
+        self.action_space = action_space
 
-        self.loss = self._build_loss(loss, action_size, **kwargs)
+        # Temporary
+        # Only dicrete action so far
+        action_size = action_space.n
+
+        # Depending on action space, build distribution
+        self.distribution = self._build_distribution(self.action_space)
+
+        # Construit model, loss, optimizer
+        self.loss = self._build_loss(loss, self.distribution, **kwargs)
         self.optimizer = self._build_optimizer(optimizer, lr)
-        self.model = self._build_model(model, state_shape, action_size)
+        self.model = self._build_model(model, state_shape, self.distribution)
+
+        # Loss evaluator
         self.eval_loss = Mean('loss')
 
     def sample(self, logits):
@@ -77,7 +92,7 @@ class TFPlatform(MLPlatform):
 
         return self.eval_loss(loss)
 
-    def _build_loss(self, loss: str, action_size: int, **kwargs):
+    def _build_loss(self, loss: str, dist: TFDistribution, **kwargs):
         loss_out = None
 
         if loss == 'mean_squared_error' or loss == 'mse':
@@ -87,7 +102,9 @@ class TFPlatform(MLPlatform):
             coeff_entropy = kwargs.get('coeff_entropy', 0.001)
 
             loss_out = loss_actor_critic(
-                action_size, _coeff_vf=coeff_vf, _coeff_entropy=coeff_entropy
+                dist,
+                _coeff_vf=coeff_vf,
+                _coeff_entropy=coeff_entropy
             )
         else:
             raise NotImplementedError(f'Unknow loss in TF-platform: {loss}')
@@ -105,7 +122,7 @@ class TFPlatform(MLPlatform):
 
         return optimizer_out
 
-    def _build_model(self, model='dense', state_shape=None, action_shape=None):
+    def _build_model(self, model='dense', state_shape=None, dist=None):
         """
         Build model from TF-Keras model or string
         """
@@ -115,12 +132,36 @@ class TFPlatform(MLPlatform):
             model_output = str_to_model(
                 model,
                 input_shape=state_shape,
-                output_shape=action_shape
+                dist=dist
             )
 
         model_output.compile(loss=self.loss, optimizer=self.optimizer)
 
         return model_output
+
+    def _build_distribution(self, action_space):
+        """
+        Build distribution from action space
+        
+        Parameters
+        ----------
+            action_space: gym.spaces.Space
+                Action space
+        Returns
+        -------
+            distribution: sweet.interface.tf.tf_distributions.TFDistribution
+                Output distribution
+        """
+        if isinstance(action_space, gym.spaces.Discrete):
+            return TFCategoricalDist(n_cat=action_space.n)
+        elif isinstance(action_space, gym.spaces.Box):
+            raise NotImplementedError(
+                "Distribution for Box action space not implemented")
+        else:
+            raise NotImplementedError((
+                f"Distribution for {type(action_space)}"
+                "action space not implemented"
+            ))    
 
     def save(self, target_path):
         if not target_path.endswith('.h5'):

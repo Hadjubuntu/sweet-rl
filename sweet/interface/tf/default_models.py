@@ -5,7 +5,7 @@ from tensorflow.keras.layers import (
 )
 
 
-def dense(input_shape, output_shape, output_activation='linear', name=None):
+def dense(input_shape, dist, name=None):
     """
     Build a simple Dense model
 
@@ -28,7 +28,7 @@ def dense(input_shape, output_shape, output_activation='linear', name=None):
     x = Dense(256, activation='tanh')(x)
     x = Dense(256, activation='tanh')(x)
     
-    predictions = Dense(output_shape, activation='linear')(x)
+    predictions = dist.pd_from_latent(x)
 
     # Finally build model
     model = Model(inputs=inputs, outputs=predictions, name=name)
@@ -37,7 +37,7 @@ def dense(input_shape, output_shape, output_activation='linear', name=None):
     return model
 
 
-def pi_actor_critic(input_shape, output_shape):
+def pi_actor_critic(input_shape, dist):
     # Create inputs
     inputs = Input(shape=input_shape)
     advs = Input(shape=1)
@@ -51,7 +51,7 @@ def pi_actor_critic(input_shape, output_shape):
     xv = Dense(nb_features, activation='tanh')(x)
     xv = Dense(nb_features, activation='tanh')(xv)
     
-    logits = Dense(output_shape)(xa)
+    logits = dist.pd_from_latent(xa)
     value = Dense(1, activation='linear')(xv)
 
     # Finally build model
@@ -65,7 +65,7 @@ def pi_actor_critic(input_shape, output_shape):
     return model
 
 
-def str_to_model(model_str: str, input_shape, output_shape, n_layers=1):
+def str_to_model(model_str: str, input_shape, dist, n_layers=1):
     """
     Build model from string:
 
@@ -73,8 +73,8 @@ def str_to_model(model_str: str, input_shape, output_shape, n_layers=1):
     'conv': Convolutionnal neural network
     """
     if model_str == 'dense':
-        return dense(input_shape, output_shape)
+        return dense(input_shape, dist)
     elif model_str == 'pi_actor_critic':
-        return pi_actor_critic(input_shape, output_shape)
+        return pi_actor_critic(input_shape, dist)
     else:
         raise NotImplementedError(f"Unknow model: {model_str}")
