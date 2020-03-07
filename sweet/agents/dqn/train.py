@@ -94,7 +94,7 @@ def learn(
     agent = DqnAgent(
         ml_platform=ml_platform,
         state_shape=env.observation_space.shape,
-        action_size=env.action_space.n,
+        action_space=env.action_space,
         model=model,
         lr=lr,
         gamma=gamma,

@@ -82,6 +82,6 @@ if __name__ == "__main__":
     env = gym.make('CartPole-v0')
     agent = DqnAgent(
         state_shape=env.observation_space.shape,
-        action_size=env.action_space.n)
+        action_space=env.action_space)
 
     learn_oldfashion(env, agent)

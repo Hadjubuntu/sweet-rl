@@ -7,6 +7,8 @@ from collections import deque
 import numpy as np
 import random
 
+from gym.spaces import Discrete
+
 
 class DqnAgent(Agent):
     """
@@ -24,8 +26,9 @@ class DqnAgent(Agent):
             Torch = sweet.interface.tf.tf_platform.TorchPlatform
         state_shape: shape
             Observation state shape
-        action_size: int
-            Number of actions (Discrete only so far)
+        action_space: gym.spaces
+            Action space
+            (gym.spaces.Discrete for discrete action, gym.spaces.Box for continuous action space)
         model: Model or str
             Neural network model or string representing NN (dense, cnn)
         lr: float or sweet.common.schedule.Schedule
@@ -47,7 +50,7 @@ class DqnAgent(Agent):
         self,
         ml_platform: MLPlatform,
         state_shape,
-        action_size,
+        action_space,
         model='dense',
         lr=ConstantSchedule(0.01),
         gamma: float = 0.95,
@@ -57,7 +60,10 @@ class DqnAgent(Agent):
         replay_buffer: int = 2000
     ):
         # Generic initialization
-        super().__init__(ml_platform, lr, model, state_shape, action_size)
+        super().__init__(ml_platform, lr, model, state_shape, action_space)
+
+        assert type(action_space) == Discrete, "Only discrete action for DQN so far"
+        self.action_size = action_space.n
 
         # Hyperparameters
         self.gamma = gamma

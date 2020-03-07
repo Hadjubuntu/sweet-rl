@@ -18,8 +18,9 @@ class A2CAgent(Agent):
             Torch = sweet.interface.tf.tf_platform.TorchPlatform
         state_shape: shape
             Observation state shape
-        action_size: int
-            Number of actions (Discrete only so far)
+        action_space: gym.spaces
+            Action space
+            (gym.spaces.Discrete for discrete action, gym.spaces.Box for continuous action space)
         model: Model or str
             Neural network model or string representing NN (dense, cnn)
         lr: float or sweet.common.schedule.Schedule
@@ -36,7 +37,7 @@ class A2CAgent(Agent):
     def __init__(self,
                  ml_platform: MLPlatform,
                  state_shape,
-                 action_size,
+                 action_space,
                  model='pi_actor_critic',
                  lr=0.003,
                  coeff_critic: float=0.5,
@@ -46,7 +47,7 @@ class A2CAgent(Agent):
                  loss='actor_categorical_crossentropy'):
         # Generic initialization
         super().__init__(
-            ml_platform, lr, model, state_shape, action_size,
+            ml_platform, lr, model, state_shape, action_space,
             optimizer=optimizer, loss=loss,
             kwargs={'coeff_vf': coeff_critic, 'coeff_entropy': coeff_entropy}
         )

@@ -16,13 +16,16 @@ class TFPlatform(MLPlatform):
         optimizer,
         lr,
         state_shape,
-        action_size,
+        action_space,
         **kwargs
     ):
         """
         Initialize tensorflow platform
         """
         super().__init__('tensorflow')
+
+        action_size = action_space.n  # Only dicrete action so far
+
         self.loss = self._build_loss(loss, action_size, **kwargs)
         self.optimizer = self._build_optimizer(optimizer, lr)
         self.model = self._build_model(model, state_shape, action_size)

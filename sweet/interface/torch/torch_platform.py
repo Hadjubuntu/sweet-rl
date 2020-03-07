@@ -17,13 +17,16 @@ class TorchPlatform(MLPlatform):
         optimizer,
         lr,
         state_shape,
-        action_size,
+        action_space,
         **kwargs
     ):
         """
         Initialize Torch platform
         """
         super().__init__('torch')
+
+        action_size = action_space.n  # Only dicrete action so far
+
         self.model = self._build_model(model, state_shape, action_size)
         self.loss = self._build_loss(loss, **kwargs)
         self.optimizer = self._build_optimizer(optimizer, lr)

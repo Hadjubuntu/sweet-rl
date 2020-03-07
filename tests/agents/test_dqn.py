@@ -9,6 +9,7 @@ from sweet.envs.basic_env import BasicEnv
 logger = Logger(log_in_file=False)
 
 
+
 def test_dqn(env_name='basic-v0'):
     """
     Test DQN on a dummy env

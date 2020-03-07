@@ -17,7 +17,7 @@ class Agent(ABC):
             lr,
             model,
             state_shape,
-            action_size,
+            action_space,
             optimizer: str = 'adam',
             loss: str = 'mean_squared_error',
             **kwargs):
@@ -26,7 +26,7 @@ class Agent(ABC):
         """
         # Input/output shapes
         self.state_shape = state_shape
-        self.action_size = action_size
+        self.action_space = action_space
 
         # Set common hyperparameters
         self.lr = lr
@@ -39,7 +39,7 @@ class Agent(ABC):
             optimizer,
             self.lr,
             state_shape,
-            action_size,
+            action_space,
             **kwargs
         )
 
