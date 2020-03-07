@@ -15,12 +15,14 @@ from tensorflow.keras.layers import (
 from sweet.agents.dqn.train import learn
 from sweet.interface.tf.tf_platform import TFPlatform
 
+from sweet.interface.tf.tf_distributions import TFCategoricalDist
+
 
 def custom_model(env_name):
     # Create env to retrieve state shape and action space
     env = gym.make(env_name)
     input_shape = env.observation_space.shape
-    output_shape = env.action_space.n
+    dist = TFCategoricalDist(n_cat=env.action_space.n)
 
     # Then create TF 2.0 model
     inputs = Input(shape=input_shape)
@@ -28,7 +30,9 @@ def custom_model(env_name):
 
     x = Dense(128, activation='tanh')(x)
     x = Dense(128, activation='tanh')(x)
-    predictions = Dense(output_shape, activation='linear')(x)
+
+    # Build distribution for discrete action space
+    predictions = dist.pd_from_latent(x)
 
     # Finally build model
     model = Model(inputs=inputs, outputs=predictions, name='custom_model')
