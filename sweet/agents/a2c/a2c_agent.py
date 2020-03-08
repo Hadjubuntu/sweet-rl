@@ -84,6 +84,8 @@ class A2CAgent(Agent):
         action_sample_np = self.sample(action_logits).numpy()
         action = action_sample_np[0]
 
+        print(f"----action {action} --------")
+
         return action, value
 
     def update(self, obs, rewards, actions, dones, values):
