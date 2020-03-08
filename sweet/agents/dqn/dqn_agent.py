@@ -97,7 +97,7 @@ class DqnAgent(Agent):
         else:
             a = np.argmax(q_values[0])
 
-        return a, q_values
+        return np.array(a), q_values
 
     def step_callback(self, data):
         """
