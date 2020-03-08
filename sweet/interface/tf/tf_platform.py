@@ -31,10 +31,6 @@ class TFPlatform(MLPlatform):
 
         self.action_space = action_space
 
-        # Temporary
-        # Only dicrete action so far
-        action_size = action_space.n
-
         # Depending on action space, build distribution
         self.distribution = self._build_distribution(self.action_space)
 
@@ -149,13 +145,15 @@ class TFPlatform(MLPlatform):
         if isinstance(action_space, gym.spaces.Discrete):
             return TFCategoricalDist(n_cat=action_space.n)
         elif isinstance(action_space, gym.spaces.Box):
-            raise NotImplementedError(
-                "Distribution for Box action space not implemented")
+            assert len(action_space.shape) == 1, "Box dim > 1 action space"
+            return TFDiagGaussianDist(size=action_space.shape[0])
         else:
-            raise NotImplementedError((
-                f"Distribution for {type(action_space)}"
-                "action space not implemented"
-            ))    
+            raise NotImplementedError(
+                (
+                    f"Distribution for {type(action_space)}"
+                    "action space not implemented"
+                )
+            )
 
     def save(self, target_path):
         if not target_path.endswith('.h5'):

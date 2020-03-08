@@ -6,6 +6,8 @@ from tensorflow.keras.layers import (
 )
 import tensorflow.keras.losses as kls
 
+import numpy as np
+
 
 class TFDistribution:
     """
@@ -47,6 +49,13 @@ class TFCategoricalDist(TFDistribution):
         return logits
 
     def neglogp(self, x_true, x):
+        # First, one-hot encoding of true value y_true
+        x_true = tf.expand_dims(
+            tf.cast(x_true, tf.int32),
+            axis=1
+        )
+        x_true = tf.one_hot(x_true, depth=self.n_cat)
+
         return self.cross_entrop(x_true, x)
 
     def n(self):
@@ -56,7 +65,7 @@ class TFCategoricalDist(TFDistribution):
         return self.cross_entrop(x, x)
 
     def sample(self, logits):
-        # Sample distribution from logits
+        # Sample distribution from logits
         return tf.squeeze(tf.random.categorical(logits, 1), axis=-1)
 
 
@@ -64,11 +73,46 @@ class TFDiagGaussianDist(TFDistribution):
     def __init__(self, size):
         super().__init__()
         self.size = size
+        self.mean = None
+        self.logstd = None
+        self.std = None
 
     def pd_from_latent(self, x_latent):
-        mean = Dense(self.size)(x_latent)
-        std = Dense(self.size)(x_latent)
-        return tf.concat([mean, std], axis=1)
+        self.mean = Dense(self.size)(x_latent)
+        self.logstd = Dense(self.size)(x_latent)
+        self.std = tf.exp(self.logstd)
+
+        return tf.concat([self.mean, self.logstd], axis=1)
+
+    def neglogp(self, x_true, x):
+        if len(x.shape) > 1:
+            mean, logstd = tf.split(x, 2, axis=1)
+
+            # * tf.to_float(tf.shape(mean)[-1])
+            return 0.5 * tf.reduce_sum(tf.square((x_true - mean) / tf.exp(logstd)), axis=-1) \
+                + 0.5 * np.log(2.0 * np.pi)  \
+                + tf.reduce_sum(logstd, axis=-1)
+        else:
+            return 0.0
 
     def n(self):
         return 2 * self.size
+
+    def entropy(self, x):
+        if len(x.shape) > 1:
+            _, std = tf.split(x, 2, axis=1)
+
+            return tf.reduce_sum(
+                std + .5 * np.log(2.0 * np.pi * np.e),
+                axis=-1
+            )
+        else:
+            return 0.0
+
+    def sample(self, logits):
+        if len(logits.shape) > 1:
+            mean, std = tf.split(logits, 2, axis=1)
+
+            return mean + std * tf.random.normal(tf.shape(mean))
+        else:
+            return tf.convert_to_tensor(tf.constant([[0.0]]), dtype=tf.float32)

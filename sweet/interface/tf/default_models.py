@@ -50,7 +50,7 @@ def pi_actor_critic(input_shape, dist):
 
     xv = Dense(nb_features, activation='tanh')(x)
     xv = Dense(nb_features, activation='tanh')(xv)
-    
+
     logits = dist.pd_from_latent(xa)
     value = Dense(1, activation='linear')(xv)
 

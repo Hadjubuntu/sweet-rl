@@ -39,6 +39,9 @@ class Runner():
         mb_obs, mb_next_obs, mb_rewards, mb_actions, mb_dones, mb_values = [], [], [], [], [], []
         mb_infos = []
 
+        # Store default action dtype
+        action_dtype = np.int32
+
         # Reset environment and stop condition
         self.stop_cond.reset()
         done = False
@@ -69,6 +72,7 @@ class Runner():
             mb_actions.append(action)
             mb_dones.append(done)
             mb_values.append(value)
+            action_dtype = action.dtype
 
             self.obs = next_obs
 
@@ -86,8 +90,16 @@ class Runner():
         mb_next_obs = np.asarray(mb_next_obs, dtype=np.float32)
         mb_rewards = np.asarray(mb_rewards, dtype=np.float32)
         # FIXME: int32 for action => Discrete action so far
-        mb_actions = np.asarray(mb_actions, dtype=np.int32)
+        mb_actions = np.asarray(mb_actions, dtype=action_dtype)
         mb_dones = np.asarray(mb_dones, dtype=np.int32)
         mb_values = np.asarray(mb_values, dtype=np.float32)
 
-        return mb_obs, mb_next_obs, mb_rewards, mb_actions, mb_dones, mb_values, mb_infos
+        return (
+            mb_obs,
+            mb_next_obs,
+            mb_rewards,
+            mb_actions,
+            mb_dones,
+            mb_values,
+            mb_infos
+        )

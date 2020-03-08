@@ -67,3 +67,6 @@ class TorchCategoricalDist(TorchDistribution):
 class TorchDiagGaussianDist(TorchDistribution):
     def __init__(self):
         super().__init__()
+
+    def sample(self, logits):
+        pass
